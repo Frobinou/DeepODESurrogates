@@ -32,7 +32,7 @@ ode_config = ODESConfig(
         delta=1.0,
         gamma=1.0,
     ),
-    grid_size=2000,
+    grid_size=200,
     t_span=(0.0, 50.0),
     initial_conditions=[1.0, 1.0],
     dimension=2,

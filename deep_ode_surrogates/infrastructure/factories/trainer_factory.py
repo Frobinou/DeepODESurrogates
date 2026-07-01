@@ -63,8 +63,8 @@ def build_trainer(
 
     model = model_registry.create(
             training_config.model_name,
-            input_dim=ode_config.grid_size,
-            output_dim=ode_config.grid_size,
+            input_dim=1, # Because for ODEs, the input is usually time t, which is 1D
+            output_dim=ode_config.dimension,
         )
 
     loss = loss_registry.create(

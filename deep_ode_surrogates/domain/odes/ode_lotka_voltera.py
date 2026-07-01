@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 
 from deep_ode_surrogates.domain.odes.base import BaseODE
-from deep_ode_surrogates.olddddd.repositories.odes.visualizers.base_visualizer import VisualizationMixin
 from deep_ode_surrogates.infrastructure.registries.ode_registry import register_ode
 from deep_ode_surrogates.domain.odes import AvailablesODE
 
@@ -17,7 +16,7 @@ class ParamsLotkaVolterra(BaseModel):
     gamma: float = 2.0
 
 @register_ode(AvailablesODE.LOTKA_VOLTERA)
-class LotkaVolteraODE(BaseODE, VisualizationMixin):
+class LotkaVolteraODE(BaseODE):
     def __init__(self, params: ParamsLotkaVolterra):
         self.name = AvailablesODE.LOTKA_VOLTERA
         self.params = params

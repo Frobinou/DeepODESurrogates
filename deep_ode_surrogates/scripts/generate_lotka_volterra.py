@@ -24,6 +24,8 @@ df = generator.execute(
     ode=ode,
     n_sims=1,
     x0=[10., 1.],
+    n_steps=200,
+    t_span=(0.0, 10.0),
 )
 
 fig = plot_trajectory(df['t'], y=df[['prey', 'predator']].values, state_names=["Prey", "Predator"], title="Lotka-Volterra Trajectory")
