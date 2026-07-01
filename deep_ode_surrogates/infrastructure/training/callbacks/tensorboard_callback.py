@@ -35,7 +35,12 @@ class TensorBoardCallback(Callback):
 
     def on_evaluation_end(self, trainer, evaluation_results):
         step = trainer.epoch_step
-        self.log_dict(evaluation_results, step, prefix="Evaluation")
+
+        metrics = evaluation_results.get("metrics", {})
+        figures = evaluation_results.get("figures", {})
+
+        self.log_dict(metrics, step, prefix="Evaluation")
+        self.log_plotly_figures(figures, step, prefix="Evaluation")
 
     def on_epoch_start(self, trainer, epoch):
         return super().on_epoch_start(trainer, epoch)
@@ -63,10 +68,10 @@ class TensorBoardCallback(Callback):
         )
 
         # physics loss
-        if "ode" in loss_dict and loss_dict["ode"] is not None:
+        if "physics" in loss_dict and loss_dict["physics"] is not None:
             self.writer.add_scalar(
                 "Training/loss/physics",
-                loss_dict["ode"].item(),
+                loss_dict["physics"].item(),
                 step,
             )
 
@@ -133,3 +138,21 @@ class TensorBoardCallback(Callback):
                     value,
                     step,
                 )
+
+    def log_plotly_figures(self, figures: dict, step: int, prefix: str = "Evaluation"):
+        import io
+
+        import numpy as np
+        from PIL import Image
+
+        for key, fig in figures.items():
+            png_bytes = fig.to_image(format="png")
+            image = Image.open(io.BytesIO(png_bytes))
+            image = np.asarray(image)
+
+            self.writer.add_image(
+                f"{prefix}/{key}",
+                image,
+                global_step=step,
+                dataformats="HWC",
+            )

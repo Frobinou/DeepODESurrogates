@@ -6,4 +6,10 @@ class FinalEvaluationCallback(Callback):
         self.evaluator = evaluator
 
     def on_train_end(self, trainer):
-        self.evaluator.run(trainer)
+        evaluation_results = self.evaluator.run(trainer)
+
+        for callback in trainer.callbacks:
+            callback.on_evaluation_end(
+                trainer=trainer,
+                evaluation_results=evaluation_results,
+            )
