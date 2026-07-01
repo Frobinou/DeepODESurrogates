@@ -17,4 +17,6 @@ site/
 
 # Data
 runs/
-data/
+data/*
+!deep_ode_surrogates\infrastructure\data/
+!deep_ode_surrogates\infrastructure\data/**
