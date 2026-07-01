@@ -6,5 +6,6 @@ except ImportError:
     class StrEnum(str, Enum):
         pass
 
+
 class AvailablesLoss(StrEnum):
     PINN_LOSS = "PINN_LOSS"

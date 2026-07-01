@@ -137,10 +137,12 @@ def test_generate_dataset_with_sampled_params_and_sampled_x0():
     generator = make_generator()
 
     def x0_sampler(rng):
-        return np.array([
-            rng.uniform(0.5, 2.0),
-            rng.uniform(0.5, 2.0),
-        ])
+        return np.array(
+            [
+                rng.uniform(0.5, 2.0),
+                rng.uniform(0.5, 2.0),
+            ]
+        )
 
     def param_sampler(rng):
         return DummyParams(

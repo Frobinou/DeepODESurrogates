@@ -6,6 +6,7 @@ except ImportError:
     class StrEnum(str, Enum):
         pass
 
+
 class AvailablesAIModel(StrEnum):
     BASIC_PINN = "BasicPINNS"
     DIFFUSION_SCORENET = "Diffusion_ScoreNet"
