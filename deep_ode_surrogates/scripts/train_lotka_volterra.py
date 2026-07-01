@@ -71,7 +71,7 @@ callbacks = CallbackConfig(
     early_stopping_patience=10,
 )
 
-evaluation = EvaluatorConfig(use_mse=True)
+evaluation = EvaluatorConfig(use_mse=True, use_trajectory=True, use_plot=True)
 
 experiment_config = ExperimentConfig(
     ode=ode_config,

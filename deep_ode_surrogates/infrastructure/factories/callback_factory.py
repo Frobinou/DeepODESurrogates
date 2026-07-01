@@ -7,12 +7,15 @@ from deep_ode_surrogates.infrastructure.training.callbacks.checkpoint_callback i
 from deep_ode_surrogates.infrastructure.training.callbacks.earlystopping_callback import (
     EarlyStoppingCallback,
 )
+from deep_ode_surrogates.infrastructure.training.callbacks.finalevaluation_callback import (
+    FinalEvaluationCallback,
+)
 from deep_ode_surrogates.infrastructure.training.callbacks.tensorboard_callback import (
     TensorBoardCallback,
 )
 
 
-def build_callbacks(experiment_path, training_config, callback_config, logger=None):
+def build_callbacks(experiment_path, training_config, callback_config, evaluators, logger=None):
     callbacks = []
 
     if callback_config.use_tensorboard:
@@ -33,4 +36,6 @@ def build_callbacks(experiment_path, training_config, callback_config, logger=No
             )
         )
 
+    for evaluator in evaluators:
+        callbacks.append(FinalEvaluationCallback(evaluator))
     return callbacks

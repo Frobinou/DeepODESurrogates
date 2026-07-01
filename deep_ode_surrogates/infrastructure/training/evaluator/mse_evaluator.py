@@ -32,3 +32,10 @@ class MSEEvaluator(Evaluator):
         trainer.state["metrics"]["mse"] = total_mse
 
         model.train()
+
+        return {
+            "metrics": {
+                "mse": mse,
+            },
+            "figures": {},
+        }

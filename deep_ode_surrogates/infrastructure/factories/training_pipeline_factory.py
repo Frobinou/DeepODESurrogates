@@ -30,15 +30,16 @@ def build_training_pipeline(
         device=experiment_config.device,
     )
 
+    evaluators = build_evaluators(
+        evaluation_config=experiment_config.evaluation, data_loader=dataloader
+    )
+
     callbacks = build_callbacks(
         experiment_path=experiment_path,
         training_config=experiment_config.training,
         callback_config=experiment_config.callbacks,
+        evaluators=evaluators,
         logger=logger,
-    )
-
-    evaluators = build_evaluators(
-        evaluation_config=experiment_config.evaluation, data_loader=dataloader
     )
 
     return TrainingPipeline(
