@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from deep_ode_surrogates.domain.odes.base import BaseODE
 from deep_ode_surrogates.olddddd.repositories.odes.visualizers.base_visualizer import VisualizationMixin
 from deep_ode_surrogates.infrastructure.registries.ode_registry import register_ode
-from deep_ode_surrogates.application.config.enums import AvailablesODE
+from deep_ode_surrogates.domain.odes import AvailablesODE
 
 
 class ParamsLotkaVolterra(BaseModel):

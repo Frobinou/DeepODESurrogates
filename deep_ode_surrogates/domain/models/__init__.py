@@ -1,4 +1,3 @@
-
 try:
     from enum import StrEnum
 except ImportError:
@@ -7,7 +6,6 @@ except ImportError:
     class StrEnum(str, Enum):
         pass
 
-
-class AvailablesODE(StrEnum):
-    LOTKA_VOLTERA = "lotka_volterra"
-    CFAST = "cfast"
+class AvailablesAIModel(StrEnum):
+    BASIC_PINN = "BasicPINNS"
+    DIFFUSION_SCORENET = "Diffusion_ScoreNet"
