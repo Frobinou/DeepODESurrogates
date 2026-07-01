@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
+
 import torch
 from torch.utils.data import DataLoader, Dataset, random_split
+
 from deep_ode_surrogates.application.config.data import DataConfig
-
-
 
 
 class BaseDataLoader(ABC):
@@ -17,7 +17,9 @@ class BaseDataLoader(ABC):
         self,
         data_config: DataConfig,
     ):
-        assert data_config.train_ratio + data_config.val_ratio < 1.0, "train_ratio + val_ratio must be < 1"
+        assert data_config.train_ratio + data_config.val_ratio < 1.0, (
+            "train_ratio + val_ratio must be < 1"
+        )
 
         self.batch_size = data_config.batch_size
         self.num_workers = data_config.num_workers
@@ -54,7 +56,8 @@ class BaseDataLoader(ABC):
             num_workers=self.num_workers,
             pin_memory=self.pin_memory,
         )
-        return (DataLoader(train_ds, shuffle=True, **kwargs),
+        return (
+            DataLoader(train_ds, shuffle=True, **kwargs),
             DataLoader(val_ds, shuffle=False, **kwargs),
             DataLoader(test_ds, shuffle=False, **kwargs),
         )

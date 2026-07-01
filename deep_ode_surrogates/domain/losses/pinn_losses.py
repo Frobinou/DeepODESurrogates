@@ -1,6 +1,8 @@
 import torch
-from deep_ode_surrogates.infrastructure.registries.loss_registry import register_loss
+
 from deep_ode_surrogates.domain.losses import AvailablesLoss
+from deep_ode_surrogates.infrastructure.registries.loss_registry import register_loss
+
 
 @register_loss(AvailablesLoss.PINN_LOSS)
 class PINNLoss:
@@ -28,7 +30,7 @@ class PINNLoss:
         derivatives = []
 
         for variable_index in range(y_pred.shape[1]):
-            y_variable = y_pred[:, variable_index:variable_index + 1]
+            y_variable = y_pred[:, variable_index : variable_index + 1]
 
             dy_variable_dt = torch.autograd.grad(
                 outputs=y_variable,
@@ -41,8 +43,6 @@ class PINNLoss:
             derivatives.append(dy_variable_dt)
 
         return torch.cat(derivatives, dim=1)
-
-
 
     def _physics_loss(self, model: torch.nn.Module, t: torch.Tensor) -> torch.Tensor:
         """
@@ -85,7 +85,6 @@ class PINNLoss:
         batch: dict,
         t: torch.Tensor,
     ) -> dict[str, torch.Tensor | None]:
-
         if t.ndim == 1:
             t = t.unsqueeze(1)
 

@@ -1,14 +1,8 @@
-import torch
-
-from deep_ode_surrogates.domain.odes.base import BaseODE
-from deep_ode_surrogates.olddddd.repositories.odes.visualizers.base_visualizer import VisualizationMixin
-from deep_ode_surrogates.domain.odes import AvailablesODE
- from deep_ode_surrogates.infrastructure.registries.ode_registry import register_ode
 from pydantic import BaseModel
 
-import numpy as np
-import matplotlib.pyplot as plt
-from io import BytesIO
+from deep_ode_surrogates.domain.odes import AvailablesODE
+from deep_ode_surrogates.domain.odes.base import BaseODE
+from deep_ode_surrogates.infrastructure.registries.ode_registry import register_ode
 
 
 class ParamsCFAST(BaseModel):
@@ -20,6 +14,7 @@ class ParamsCFAST(BaseModel):
     outside_temperature: float = 293  # K, 20 degree
     Q: float = 0.44 / 1000  # MW
     R: float = 289.14  # Gaz constant J/kg/K
+
 
 @register_ode(AvailablesODE.CFAST)
 class CFASTODE(BaseODE):
@@ -99,29 +94,3 @@ class CFASTODE(BaseODE):
         )
         m_dot_l = -self.params.combustion_speed * self.params.combustion_heat
         return m_dot_l, m_dot_u
-
-    # ---------- Plot ----------
-    def log_trajectory_plot(self, t_true, y_true, y_pred):
-        fig, ax = plt.subplots()
-
-        for i, value in enumerate(["p", "T_u", "T_l", "V_u"]):
-            ax.plot(t_true, y_true[:, i], label=f"{value} (SciPy)")
-            ax.plot(t_true, y_pred[:, i], "--", label=f"{value} (NN)")
-
-        ax.legend()
-        ax.set_xlabel("t")
-        ax.set_ylabel("Values")
-
-        buf = BytesIO()
-        fig.savefig(buf, format="png")
-        buf.seek(0)
-
-        img = torch.tensor(np.array(plt.imread(buf))).permute(2, 0, 1)
-
-        plt.close(fig)
-        return img
-
-    # ---------- Simple visualization ----------
-    def log_trajectory_phase_space_plot(self, y_true, y_pred):
-
-        return None

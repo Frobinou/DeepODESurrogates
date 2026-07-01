@@ -1,13 +1,13 @@
 import torch
 
-
 from deep_ode_surrogates.infrastructure.training.evaluator.base import Evaluator
+
+
 class MSEEvaluator(Evaluator):
     def __init__(self, dataloader):
         self.dataloader = dataloader
 
     def run(self, trainer):
-
         model = trainer.model
         model.eval()
 

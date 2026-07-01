@@ -3,8 +3,6 @@
 from pydantic import BaseModel
 
 
-
-
 class CallbackConfig(BaseModel):
     use_tensorboard: bool = True
     use_checkpoint: bool = True

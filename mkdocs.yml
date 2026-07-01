@@ -1,24 +1,15 @@
-site_name: ODEPINNSFramework
-site_description: ODEPINNSFramework is a Python framework for simulating and solving Ordinary Differential Equations (ODEs) using Physics-Informed Neural Networks (PINNs). It combines data-driven learning with physical constraints, enabling models to learn solutions that respect underlying dynamical systems. The framework is designed to be modular, flexible, and suitable for both research and practical applications.
-site_url: https://frobinou.github.io/PINNSFramework/
-repo_url: https://github.com/Frobinou/PINNSFramework
-repo_name: Frobinou/PINNSFramework
-
-nav:
-  - Accueil: index.md
-  # Ajoutez vos pages ici
-
-plugins:
-  - search
-  - minify:
-      minify_html: true
+site_name: DeepODESurrogates
+site_description: DeepODESurrogates is a Python framework for simulating and solving Ordinary Differential Equations (ODEs) using Physics-Informed Neural Networks (PINNs).
+site_url: https://frobinou.github.io/DeepODESurrogates/
+repo_url: https://github.com/Frobinou/DeepODESurrogates
+repo_name: Frobinou/DeepODESurrogates
 
 theme:
-  name: material          # pip install mkdocs-material
-  language: en
+  name: material
+  language: fr
   font:
-    text: Raleway        # police du corps
-    code: Source Code Pro  # police du code
+    text: Raleway
+    code: Source Code Pro
   palette:
     - scheme: default
       primary: deep orange
@@ -34,28 +25,32 @@ theme:
         name: Passer en mode clair
 
 nav:
-  - Home: index.md
+  - Accueil: index.md
   - Code: code.md
 
 plugins:
+  - search
+  - minify:
+      minify_html: true
   - mkdocstrings:
       handlers:
         python:
-          paths: [src]
+          paths:
+            - .
           options:
             docstring_style: google
             show_source: true
-  - search
   - i18n:
-      default_language: en
+      docs_structure: suffix
       languages:
         - locale: fr
+          default: true
           name: Français
           build: true
         - locale: en
           name: English
           build: true
-          default: true
+
 extra:
   alternate:
     - name: Français
@@ -66,10 +61,10 @@ extra:
       lang: en
 
 markdown_extensions:
-  - pymdownx.arithmatex:
-      generic: true
   - tables
   - admonition
+  - pymdownx.arithmatex:
+      generic: true
+
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
-

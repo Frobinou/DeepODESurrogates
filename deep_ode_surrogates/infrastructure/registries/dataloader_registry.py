@@ -1,5 +1,6 @@
 # infrastructure/registries/dataloader_registry.py
 
+
 class DataloaderRegistry:
     def __init__(self):
         self._dataloaders = {}
@@ -9,9 +10,7 @@ class DataloaderRegistry:
 
     def create(self, name: str, data_config):
         if name not in self._dataloaders:
-            raise ValueError(
-                f"Unknown dataloader '{name}'. Available: {self.available()}"
-            )
+            raise ValueError(f"Unknown dataloader '{name}'. Available: {self.available()}")
         return self._dataloaders[name](data_config=data_config)
 
     def available(self):
@@ -20,8 +19,10 @@ class DataloaderRegistry:
 
 dataloader_registry = DataloaderRegistry()
 
+
 def register_dataloader(name: str):
     def decorator(cls):
         dataloader_registry.register(name, cls)
         return cls
+
     return decorator

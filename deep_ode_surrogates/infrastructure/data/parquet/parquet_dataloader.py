@@ -1,11 +1,13 @@
+from pathlib import Path
+
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
-from pathlib import Path
 
-from deep_ode_surrogates.infrastructure.registries.dataloader_registry import register_dataloader
-from deep_ode_surrogates.domain.data_loader.base import BaseDataLoader
 from deep_ode_surrogates.application.config.data import DataConfig
+from deep_ode_surrogates.domain.data_loader.base import BaseDataLoader
+from deep_ode_surrogates.infrastructure.registries.dataloader_registry import register_dataloader
+
 
 class ParquetDataset(Dataset):
     """
@@ -39,10 +41,9 @@ class ParquetDataset(Dataset):
         }
 
 
-@register_dataloader("parquet")  
+@register_dataloader("parquet")
 class ParquetDataLoader(BaseDataLoader):
-
-    def __init__(self, data_config:DataConfig):
+    def __init__(self, data_config: DataConfig):
         self.parquet_path = Path(data_config.data_path)
         self.input_cols = data_config.input_cols
         self.target_cols = data_config.target_cols

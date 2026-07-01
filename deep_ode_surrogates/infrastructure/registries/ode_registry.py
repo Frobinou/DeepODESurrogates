@@ -1,6 +1,5 @@
 # infrastructure/registries/ode_registry.py
 
-from typing import Type
 from pydantic import BaseModel
 
 from deep_ode_surrogates.domain.odes.base import BaseODE
@@ -19,11 +18,9 @@ class ODERegistry:
     def get(self, name: str) -> type[BaseODE]:
         try:
             return self._odes[name]
-        except KeyError:
+        except KeyError as err:
             available = ", ".join(self._odes.keys())
-            raise ValueError(
-                f"Unknown ODE '{name}'. Available ODEs: {available}"
-            )
+            raise ValueError(f"Unknown ODE '{name}'. Available ODEs: {available}") from err
 
     def create(self, name: str, params: BaseModel) -> BaseODE:
         ode_cls = self.get(name)

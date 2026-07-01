@@ -21,5 +21,3 @@ def register_loss(name: str):
         return loss_cls
 
     return decorator
-
-

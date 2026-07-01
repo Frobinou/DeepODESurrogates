@@ -4,7 +4,6 @@ from typing import Any
 import numpy as np
 import torch
 from pydantic import BaseModel
-from scipy.integrate import solve_ivp
 
 
 class BaseODE(ABC):
@@ -38,4 +37,3 @@ class BaseODE(ABC):
             return dx
 
         return torch.stack(dx, dim=1)
-

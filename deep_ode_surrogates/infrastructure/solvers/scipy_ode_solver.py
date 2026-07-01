@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 
-from deep_ode_surrogates.domain.schema import Trajectory
 from deep_ode_surrogates.domain.odes.base import BaseODE
+from deep_ode_surrogates.domain.schema import Trajectory
 
 
 class ScipyODESolver:

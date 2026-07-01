@@ -1,5 +1,7 @@
 from torch.utils.tensorboard import SummaryWriter
+
 from deep_ode_surrogates.infrastructure.training.callbacks.base import Callback
+
 
 class TensorBoardCallback(Callback):
     def __init__(
@@ -17,7 +19,6 @@ class TensorBoardCallback(Callback):
     # -------------------------
 
     def on_epoch_end(self, trainer, epoch):
-
         if trainer.epoch_step % self.log_frequency != 0:
             return
 
@@ -31,16 +32,17 @@ class TensorBoardCallback(Callback):
 
     def on_batch_end(self, trainer, loss):
         return super().on_batch_end(trainer, loss)
-    
+
     def on_evaluation_end(self, trainer, evaluation_results):
         step = trainer.epoch_step
         self.log_dict(evaluation_results, step, prefix="Evaluation")
 
     def on_epoch_start(self, trainer, epoch):
         return super().on_epoch_start(trainer, epoch)
-    
+
     def on_train_start(self, trainer):
         return super().on_train_start(trainer)
+
     # -------------------------
     # Core logging
     # -------------------------
@@ -83,7 +85,7 @@ class TensorBoardCallback(Callback):
             var_names = getattr(trainer, "var_names", None)
 
             if var_names is not None:
-                for name, res in zip(var_names, residuals.mean(dim=0)):
+                for name, res in zip(var_names, residuals.mean(dim=0), strict=False):
                     self.writer.add_scalar(
                         f"Training/residuals/{name}",
                         res.item(),
@@ -103,14 +105,13 @@ class TensorBoardCallback(Callback):
             )
 
     def _log_gradients(self, trainer):
-
         total_norm = 0.0
 
         for p in trainer.model.parameters():
             if p.grad is not None:
                 total_norm += p.grad.data.norm(2).item() ** 2
 
-        total_norm = total_norm ** 0.5
+        total_norm = total_norm**0.5
 
         self.writer.add_scalar(
             "Training/gradients/global_norm",
@@ -124,13 +125,8 @@ class TensorBoardCallback(Callback):
 
     def log_dict(self, scalar_dict: dict, step: int, prefix: str = "Evaluation"):
         for key, value in scalar_dict.items():
-
             if isinstance(value, dict):
-                self.log_dict(
-                    value,
-                    step,
-                    prefix=f"{prefix}/{key}"
-                )
+                self.log_dict(value, step, prefix=f"{prefix}/{key}")
             else:
                 self.writer.add_scalar(
                     f"{prefix}/{key}",

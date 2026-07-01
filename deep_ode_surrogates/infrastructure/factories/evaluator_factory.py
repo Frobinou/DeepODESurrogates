@@ -5,7 +5,6 @@ from deep_ode_surrogates.infrastructure.training.evaluator.mse_evaluator import 
 )
 
 
-
 def build_evaluators(
     evaluation_config,
     data_loader,
@@ -13,9 +12,6 @@ def build_evaluators(
     evaluators = []
 
     if evaluation_config.use_mse:
-        evaluators.append(
-            MSEEvaluator(data_loader)
-        )
-
+        evaluators.append(MSEEvaluator(data_loader))
 
     return evaluators

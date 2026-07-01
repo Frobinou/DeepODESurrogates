@@ -1,5 +1,4 @@
 import torch
-import pytest
 
 from deep_ode_surrogates.domain.losses.pinn_losses import PINNLoss
 
@@ -161,10 +160,7 @@ def test_total_loss_combines_physics_and_data_terms():
         t=t,
     )
 
-    expected_total = (
-        2.0 * loss_dict["physics"]
-        + 3.0 * loss_dict["data"]
-    )
+    expected_total = 2.0 * loss_dict["physics"] + 3.0 * loss_dict["data"]
 
     torch.testing.assert_close(
         loss_dict["total"],
