@@ -10,3 +10,11 @@ wheels/
 .venv
 .vscode
 .pytest_cache
+
+
+# Docs
+site/
+
+# Data
+runs/
+data/
