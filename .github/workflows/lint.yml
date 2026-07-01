@@ -38,10 +38,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
-          cache-dependency-path: requirements-docs.txt
-      - run: pip install -r requirements-docs.txt
-      - run: mkdocs build --strict
+
+      - uses: astral-sh/setup-uv@v5
+
+      - run: uv sync --group docs
+
+      - run: uv run mkdocs build --strict
