@@ -3,7 +3,7 @@
 from typing import Type
 from pydantic import BaseModel
 
-from deep_ode_surrogates.domain.odes.ode_base import BaseODE
+from deep_ode_surrogates.domain.odes.base import BaseODE
 
 
 class ODERegistry:

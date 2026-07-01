@@ -9,7 +9,6 @@ class ODESolverPort(Protocol):
         self,
         ode: BaseODE,
         x0: np.ndarray,
-        params: dict,
         t_span: tuple[float, float],
         n_steps: int,
         run_id: int | None = None,

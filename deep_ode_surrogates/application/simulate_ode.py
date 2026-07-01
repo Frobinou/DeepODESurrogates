@@ -12,7 +12,6 @@ class SimulateODEUseCase:
         self,
         ode: BaseODE,
         x0: np.ndarray,
-        params: dict,
         t_span: tuple[float, float],
         n_steps: int,
         run_id: int | None = None,
@@ -20,7 +19,6 @@ class SimulateODEUseCase:
         return self.solver.solve(
             ode=ode,
             x0=x0,
-            params=params,
             t_span=t_span,
             n_steps=n_steps,
             run_id=run_id,

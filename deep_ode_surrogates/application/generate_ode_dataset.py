@@ -54,7 +54,6 @@ class GenerateODEDatasetUseCase:
             trajectory = self.simulator.execute(
                 ode=ode,
                 x0=np.asarray(current_x0, dtype=float),
-                params=current_params.model_dump() if hasattr(current_params, "model_dump") else dict(current_params),
                 t_span=t_span,
                 n_steps=n_steps,
                 run_id=None if single_run else run_id,
