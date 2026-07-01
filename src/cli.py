@@ -7,13 +7,19 @@ cwd = str(Path.cwd())
 sys.path.append(cwd)
 
 import numpy as np
-from src.core.trainer_runner import Trainer
-from src.data_models import TrainingConfig, ODEExperiment, AvailablesODE, AvailablesAIModel, ODESConfig
+from src.old.trainer_runner import Trainer
+from src.core.schemas import (
+    TrainingConfig,
+    ODEExperiment,
+    AvailablesODE,
+    AvailablesAIModel,
+    ODESConfig,
+)
 
 # CLI entrypoint follows
 
-from src.core.inference_runner import InferenceRunner
-from src.odes.data_generator.ode_data_generator import BaseODEDataGenerator
+from src.old.inference_runner import InferenceRunner
+from src.repositories.odes.data_generator.ode_data_generator import BaseODEDataGenerator
 
 
 def parse_value(value: str) -> Any:
@@ -34,21 +40,21 @@ def parse_key_value_pairs(raw_pairs: list[str] | None) -> dict[str, Any]:
         return result
 
     for raw in raw_pairs:
-        if '=' not in raw:
+        if "=" not in raw:
             raise ValueError(f"Invalid parameter format: '{raw}'. Expected key=value")
-        key, value = raw.split('=', 1)
+        key, value = raw.split("=", 1)
         result[key] = parse_value(value)
     return result
 
 
 def build_ode_parameters(ode_name: AvailablesODE, params: dict[str, Any]) -> Any:
     if ode_name == AvailablesODE.LOTKA_VOLTERA:
-        from src.odes.ode_repository.ode_lotka_voltera import ParamsLotkaVoltera
+        from src.repositories.odes.ode_repository.ode_lotka_voltera import ParamsLotkaVoltera
 
         return ParamsLotkaVoltera(**params)
 
     if ode_name == AvailablesODE.CFAST:
-        from src.odes.ode_repository.ode_cfast import ParamsCFAST
+        from src.repositories.odes.ode_repository.ode_cfast import ParamsCFAST
 
         return ParamsCFAST(**params)
 
@@ -57,7 +63,7 @@ def build_ode_parameters(ode_name: AvailablesODE, params: dict[str, Any]) -> Any
 
 def build_default_generator(ode_name: AvailablesODE, ode_params: dict[str, Any]):
     if ode_name == AvailablesODE.LOTKA_VOLTERA:
-        from src.odes.ode_repository.ode_lotka_voltera import LotkaVoltera, ParamsLotkaVoltera
+        from src.repositories.odes.ode_repository.ode_lotka_voltera import LotkaVoltera, ParamsLotkaVoltera
 
         params = ParamsLotkaVoltera(**ode_params)
         ode = LotkaVoltera(params=params)
@@ -76,7 +82,7 @@ def build_default_generator(ode_name: AvailablesODE, ode_params: dict[str, Any])
         return ode, params, sample_x0, sample_params
 
     if ode_name == AvailablesODE.CFAST:
-        from src.odes.ode_repository.ode_cfast import ODECFAST, ParamsCFAST
+        from src.repositories.odes.ode_repository.ode_cfast import ODECFAST, ParamsCFAST
 
         params = ParamsCFAST(**ode_params)
         ode = ODECFAST(params=params)
@@ -107,7 +113,7 @@ def create_ode_config(args: Any) -> ODESConfig:
         initial_conditions=args.initial_conditions,
         model_dimension=args.model_dimension,
         grid_size=args.grid_size,
-        t_span=tuple(args.t_span)
+        t_span=tuple(args.t_span),
     )
 
 
@@ -117,10 +123,7 @@ def train_command(args: Any) -> None:
 
     trainer = Trainer(
         training_config=TrainingConfig(l_r=args.lr, epochs=args.epochs),
-                                        ode_experiment_config=ODEExperiment(
-                                            ode_config=create_ode_config(args),
-                                            data_config=None
-                                        ),
+        ode_experiment_config=ODEExperiment(ode_config=create_ode_config(args), data_config=None),
         ode_parameters=ode_parameters,
         device=args.device,
         output_folder_path=Path(args.output_dir) / args.ode,
@@ -160,36 +163,57 @@ def generate_command(args: Any) -> None:
     print(f"Saved generated data to {args.output_file}")
 
 
-
 def build_parser() -> ArgumentParser:
     parser = ArgumentParser(description="PINNSFramework command line interface")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     train_parser = subparsers.add_parser("train", help="Train a PINN model")
-    train_parser.add_argument("--ode", choices=[item.value for item in AvailablesODE], required=True)
-    train_parser.add_argument("--model", choices=[item.value for item in AvailablesAIModel], default=AvailablesAIModel.BASIC_PINN.value)
+    train_parser.add_argument(
+        "--ode", choices=[item.value for item in AvailablesODE], required=True
+    )
+    train_parser.add_argument(
+        "--model",
+        choices=[item.value for item in AvailablesAIModel],
+        default=AvailablesAIModel.BASIC_PINN.value,
+    )
     train_parser.add_argument("--lr", type=float, default=1e-3)
     train_parser.add_argument("--epochs", type=int, default=2000)
     train_parser.add_argument("--grid-size", type=int, default=200)
     train_parser.add_argument("--model-dimension", type=int, default=2)
     train_parser.add_argument("--initial-conditions", type=float, nargs="+", required=True)
     train_parser.add_argument("--t-span", type=float, nargs=2, default=(0.0, 10.0))
-    train_parser.add_argument("--ode-params", nargs="*", default=[], help="ODE parameters as key=value")
-    train_parser.add_argument("--output-dir", default="runs", help="Base output directory for experiments")
+    train_parser.add_argument(
+        "--ode-params", nargs="*", default=[], help="ODE parameters as key=value"
+    )
+    train_parser.add_argument(
+        "--output-dir", default="runs", help="Base output directory for experiments"
+    )
     train_parser.add_argument("--device", default="", help="Torch device override")
     train_parser.set_defaults(func=train_command)
 
     infer_parser = subparsers.add_parser("infer", help="Run inference from a trained experiment")
-    infer_parser.add_argument("--experiment-dir", required=True, help="Path to the experiment folder")
-    infer_parser.add_argument("--plot", action="store_true", help="Generate a plot for the inference results")
-    infer_parser.add_argument("--save-plot", action="store_true", help="Save the inference plot to disk")
+    infer_parser.add_argument(
+        "--experiment-dir", required=True, help="Path to the experiment folder"
+    )
+    infer_parser.add_argument(
+        "--plot", action="store_true", help="Generate a plot for the inference results"
+    )
+    infer_parser.add_argument(
+        "--save-plot", action="store_true", help="Save the inference plot to disk"
+    )
     infer_parser.add_argument("--device", default="", help="Torch device override")
     infer_parser.set_defaults(func=infer_command)
 
     generate_parser = subparsers.add_parser("generate", help="Generate simulation dataset")
-    generate_parser.add_argument("--ode", choices=[item.value for item in AvailablesODE], required=True)
-    generate_parser.add_argument("--ode-params", nargs="*", default=[], help="ODE parameters as key=value")
-    generate_parser.add_argument("--output-file", default="data/generated_dataset.parquet", help="Output dataset file path")
+    generate_parser.add_argument(
+        "--ode", choices=[item.value for item in AvailablesODE], required=True
+    )
+    generate_parser.add_argument(
+        "--ode-params", nargs="*", default=[], help="ODE parameters as key=value"
+    )
+    generate_parser.add_argument(
+        "--output-file", default="data/generated_dataset.parquet", help="Output dataset file path"
+    )
     generate_parser.add_argument("--n-sims", type=int, default=50)
     generate_parser.add_argument("--t-max", type=float, default=10.0)
     generate_parser.add_argument("--n-steps", type=int, default=200)

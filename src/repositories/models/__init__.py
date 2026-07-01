@@ -8,3 +8,4 @@ except ImportError:
 
 class AvailablesAIModel(StrEnum):
     BASIC_PINN = "BasicPINNS"
+    DIFFUSION_SCORENET = "Diffusion_ScoreNet"
