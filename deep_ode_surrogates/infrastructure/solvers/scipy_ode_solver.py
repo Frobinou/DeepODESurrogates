@@ -1,6 +1,6 @@
 import numpy as np
 
-from deep_ode_surrogates.domain.odes.ode_base import BaseODE
+from deep_ode_surrogates.domain.odes.base import BaseODE
 from deep_ode_surrogates.domain.schema import Trajectory
 
 
