@@ -1,5 +1,6 @@
 from deep_ode_surrogates.infrastructure.training.callbacks.base import Callback
 
+
 class EarlyStoppingCallback(Callback):
     def __init__(self, patience=20):
         self.best = float("inf")
@@ -7,7 +8,6 @@ class EarlyStoppingCallback(Callback):
         self.patience = patience
 
     def on_epoch_end(self, trainer, epoch):
-
         if trainer.last_loss < self.best:
             self.best = trainer.last_loss
             self.counter = 0
@@ -27,4 +27,4 @@ class EarlyStoppingCallback(Callback):
         return super().on_batch_end(trainer, loss)
 
     def on_epoch_start(self, trainer, epoch):
-        return super().on_epoch_start(trainer, epoch)  
+        return super().on_epoch_start(trainer, epoch)

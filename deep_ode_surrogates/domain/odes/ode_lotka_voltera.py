@@ -1,12 +1,11 @@
-import torch
 from typing import Any
+
+import torch
 from pydantic import BaseModel
 
-
-
+from deep_ode_surrogates.domain.odes import AvailablesODE
 from deep_ode_surrogates.domain.odes.base import BaseODE
 from deep_ode_surrogates.infrastructure.registries.ode_registry import register_ode
-from deep_ode_surrogates.domain.odes import AvailablesODE
 
 
 class ParamsLotkaVolterra(BaseModel):
@@ -14,6 +13,7 @@ class ParamsLotkaVolterra(BaseModel):
     beta: float = 2.0
     delta: float = 1.0
     gamma: float = 2.0
+
 
 @register_ode(AvailablesODE.LOTKA_VOLTERA)
 class LotkaVolteraODE(BaseODE):
@@ -43,4 +43,3 @@ class LotkaVolteraODE(BaseODE):
         dpredator = p.delta * prey * predator - p.gamma * predator
 
         return [dprey, dpredator]
-

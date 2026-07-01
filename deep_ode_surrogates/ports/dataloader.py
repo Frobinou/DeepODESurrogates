@@ -1,5 +1,6 @@
 from typing import Protocol
 
+
 class DataLoaderPort(Protocol):
     @property
     def train_loader(self): ...

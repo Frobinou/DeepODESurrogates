@@ -1,9 +1,9 @@
 # ── checkpoint_manager.py ─────────────────────────────────────────────────────
 
-import json
 import logging
-import torch
 from pathlib import Path
+
+import torch
 
 from deep_ode_surrogates.application.config.experiment import ExperimentConfig
 
@@ -31,11 +31,11 @@ class CheckpointManager:
 
         torch.save(
             {
-                "epoch":                epoch,
-                "model_state_dict":     model.state_dict(),
+                "epoch": epoch,
+                "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
-                "loss":                 loss,
-                "global_step":          global_step,
+                "loss": loss,
+                "global_step": global_step,
             },
             path,
         )

@@ -1,6 +1,7 @@
 import torch
 from deep_ode_surrogates.domain.data_loader.base import BaseDataLoader
 
+
 class Trainer:
     def __init__(
         self,
@@ -17,7 +18,7 @@ class Trainer:
         self.t = t
 
         self.callbacks = []
-        self.evaluators = []    
+        self.evaluators = []
         self.stop_training = False
 
         self.epoch_step = 0
@@ -50,7 +51,7 @@ class Trainer:
             for batch in self.dataloader.train_loader:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
                 self.optimizer.zero_grad()
-                loss_dict = self.loss_fn(self.model, batch,self.t.to(self.device))
+                loss_dict = self.loss_fn(self.model, batch, self.t.to(self.device))
                 loss_dict["total"].backward()
                 self.optimizer.step()
 
@@ -67,8 +68,12 @@ class Trainer:
             self.state["loss"] = {
                 "total": loss_dict.get("total", torch.tensor(0.0)).detach(),
                 "ode": loss_dict.get("ode").detach() if loss_dict.get("ode") is not None else None,
-                "data": loss_dict.get("data").detach() if loss_dict.get("data") is not None else None,
-                "residuals": loss_dict.get("residuals").detach() if loss_dict.get("residuals") is not None else None,
+                "data": loss_dict.get("data").detach()
+                if loss_dict.get("data") is not None
+                else None,
+                "residuals": loss_dict.get("residuals").detach()
+                if loss_dict.get("residuals") is not None
+                else None,
             }
 
             self.state["epoch"] = self.epoch_step

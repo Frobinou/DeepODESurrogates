@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from deep_ode_surrogates.domain.odes.base import BaseODE
 from deep_ode_surrogates.application.simulate_ode import SimulateODEUseCase
+from deep_ode_surrogates.domain.odes.base import BaseODE
 
 
 class GenerateODEDatasetUseCase:
@@ -34,17 +34,9 @@ class GenerateODEDatasetUseCase:
         n_runs = 1 if single_run else n_sims
 
         for run_id in range(n_runs):
-            current_params = (
-                param_sampler(rng)
-                if param_sampler is not None
-                else base_params
-            )
+            current_params = param_sampler(rng) if param_sampler is not None else base_params
 
-            current_x0 = (
-                x0_sampler(rng)
-                if x0_sampler is not None
-                else x0
-            )
+            current_x0 = x0_sampler(rng) if x0_sampler is not None else x0
 
             if current_x0 is None:
                 current_x0 = np.ones(len(self.target_cols))

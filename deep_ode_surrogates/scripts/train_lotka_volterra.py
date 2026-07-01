@@ -1,28 +1,25 @@
 # scripts/train_lotka_volterra.py
 
 from pathlib import Path
+
 import torch
 
-from deep_ode_surrogates.application.train import TrainUseCase
+from deep_ode_surrogates.application.config.data import DataConfig
+from deep_ode_surrogates.application.config.evaluation import EvaluatorConfig
 from deep_ode_surrogates.application.config.experiment import ExperimentConfig, PhysicsWeights
 from deep_ode_surrogates.application.config.ode import ODESConfig
-from deep_ode_surrogates.application.config.data import DataConfig
 from deep_ode_surrogates.application.config.training import TrainingConfig
-from deep_ode_surrogates.application.config.evaluation import EvaluatorConfig
-from deep_ode_surrogates.infrastructure.training.schemas import CallbackConfig
-
-from deep_ode_surrogates.domain.models import AvailablesAIModel
+from deep_ode_surrogates.application.train import TrainUseCase
 from deep_ode_surrogates.domain.losses import AvailablesLoss
-from deep_ode_surrogates.domain.odes.ode_lotka_voltera import ParamsLotkaVolterra
-
-
+from deep_ode_surrogates.domain.models import AvailablesAIModel
 from deep_ode_surrogates.domain.odes.ode_lotka_voltera import ParamsLotkaVolterra
 from deep_ode_surrogates.infrastructure.factories.training_pipeline_factory import (
     build_training_pipeline,
 )
 from deep_ode_surrogates.infrastructure.logging.logger import setup_logger
-
 from deep_ode_surrogates.infrastructure.registries.bootstrap import bootstrap
+from deep_ode_surrogates.infrastructure.training.schemas import CallbackConfig
+
 bootstrap()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -66,9 +63,15 @@ physics_weights = PhysicsWeights(
     lambda_data=1.0,
 )
 
-callbacks = CallbackConfig(use_tensorboard=True, use_checkpoint=True,   use_early_stopping=True, checkpoint_k=5, early_stopping_patience=10)
+callbacks = CallbackConfig(
+    use_tensorboard=True,
+    use_checkpoint=True,
+    use_early_stopping=True,
+    checkpoint_k=5,
+    early_stopping_patience=10,
+)
 
-evaluation= EvaluatorConfig(use_mse=True)
+evaluation = EvaluatorConfig(use_mse=True)
 
 experiment_config = ExperimentConfig(
     ode=ode_config,

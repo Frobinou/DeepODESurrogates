@@ -1,25 +1,27 @@
 # scripts/infer_lotka_volterra.py
 
 from pathlib import Path
+
 import torch
-import numpy as np
 
 from deep_ode_surrogates.application.inference import InferSurrogateUseCase
+from deep_ode_surrogates.domain.models import AvailablesAIModel
 from deep_ode_surrogates.infrastructure.persistence.checkpoints.model_loader import (
     load_model_from_checkpoint,
 )
-from deep_ode_surrogates.infrastructure.registries.model_registry import model_registry
 from deep_ode_surrogates.infrastructure.registries.bootstrap import bootstrap
+from deep_ode_surrogates.infrastructure.registries.model_registry import model_registry
 from deep_ode_surrogates.infrastructure.visualization.plotly.trajectory_plots import (
     plot_trajectory,
 )
-from deep_ode_surrogates.domain.models import AvailablesAIModel
 
 bootstrap()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-checkpoint_path = Path("runs\lotka_volterra\experiment_2026-07-01_20-12-10\save\epoch_19_loss_0.122524.pt")
+checkpoint_path = Path(
+    "runs\lotka_volterra\experiment_2026-07-01_20-12-10\save\epoch_19_loss_0.122524.pt"
+)
 
 t_span = (0.0, 10.0)
 n_steps = 200

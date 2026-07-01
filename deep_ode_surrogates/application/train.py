@@ -2,6 +2,7 @@
 
 from deep_ode_surrogates.application.config.training import TrainingPipeline
 
+
 class TrainUseCase:
     def execute(
         self,
