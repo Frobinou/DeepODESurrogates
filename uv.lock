@@ -149,7 +149,7 @@ wheels = [
 [[package]]
 name = "deep-ode-surrogates"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "fastparquet" },
     { name = "matplotlib" },

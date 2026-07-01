@@ -25,6 +25,14 @@ dependencies = [
 url = "https://download.pytorch.org/whl/cu121"
 name = "pytorch-cu121"
 
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["deep_ode_surrogates*"]
+exclude = ["data*", "runs*", "site*","tests*"]
+
 [dependency-groups]
 dev = [
     "pre-commit>=4.6.0",
