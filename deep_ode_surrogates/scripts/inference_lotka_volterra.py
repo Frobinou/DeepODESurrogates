@@ -19,7 +19,7 @@ bootstrap()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-checkpoint_path = Path("runs\lotka_volterra\experiment_2026-07-01_17-11-24\save\epoch_19_loss_0.123486.pt")
+checkpoint_path = Path("runs\lotka_volterra\experiment_2026-07-01_20-12-10\save\epoch_19_loss_0.122524.pt")
 
 t_span = (0.0, 10.0)
 n_steps = 200

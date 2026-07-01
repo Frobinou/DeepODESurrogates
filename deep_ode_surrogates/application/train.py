@@ -1,6 +1,6 @@
 # application/train.py
 
-from deep_ode_surrogates.infrastructure.training.schemas import TrainingPipeline
+from deep_ode_surrogates.application.config.training import TrainingPipeline
 
 class TrainUseCase:
     def execute(

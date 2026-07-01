@@ -8,6 +8,10 @@ class DataloaderRegistry:
         self._dataloaders[name] = dataloader_cls
 
     def create(self, name: str, data_config):
+        if name not in self._dataloaders:
+            raise ValueError(
+                f"Unknown dataloader '{name}'. Available: {self.available()}"
+            )
         return self._dataloaders[name](data_config=data_config)
 
     def available(self):

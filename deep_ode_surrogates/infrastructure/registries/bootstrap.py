@@ -10,7 +10,7 @@ import deep_ode_surrogates.domain.models.model_PINN
 import deep_ode_surrogates.domain.losses.pinn_losses
 
 # DataLoaders 
-import deep_ode_surrogates.domain.data_loader.parquet_dataloader
+import deep_ode_surrogates.infrastructure.data.parquet.parquet_dataloader
 
 
 def bootstrap():

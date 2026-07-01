@@ -1,17 +1,8 @@
 # infrastructure/training/training_pipeline.py
 
-from dataclasses import dataclass
-
 from pydantic import BaseModel
 
 
-@dataclass
-class TrainingPipeline:
-    trainer: object
-    dataloader: object
-    callbacks: list
-    evaluators: list
-    experiment_path: object
 
 
 class CallbackConfig(BaseModel):
