@@ -24,7 +24,7 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Install dependencies
+      - name: Install project and test dependencies
         run: uv sync --group dev
 
       - name: Run tests
