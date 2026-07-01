@@ -1,9 +1,9 @@
 import torch
 
-from deep_ode_surrogates.domain.odes.ode_base import BaseODE
+from deep_ode_surrogates.domain.odes.base import BaseODE
 from deep_ode_surrogates.olddddd.repositories.odes.visualizers.base_visualizer import VisualizationMixin
 from deep_ode_surrogates.olddddd.core.schemas import AvailablesODE
-from deep_ode_surrogates.olddddd.core.registry import REGISTRY
+ from deep_ode_surrogates.infrastructure.registries.ode_registry import register_ode
 from pydantic import BaseModel
 
 import numpy as np
@@ -21,7 +21,7 @@ class ParamsCFAST(BaseModel):
     Q: float = 0.44 / 1000  # MW
     R: float = 289.14  # Gaz constant J/kg/K
 
-@REGISTRY.odes.register(AvailablesODE.CFAST)
+@register_ode(AvailablesODE.CFAST)
 class CFASTODE(BaseODE):
     def __init__(self, params: ParamsCFAST):
         self.name = AvailablesODE.CFAST
