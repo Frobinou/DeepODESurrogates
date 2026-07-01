@@ -17,7 +17,8 @@ dependencies = [
     "torchaudio>=2.4.0,<2.6.0",
     "fastparquet>=2026.3.0",
     "pyarrow>=23.0.1",
-    "pymdown-extensions>=10.21.2"
+    "pymdown-extensions>=10.21.2",
+    "plotly>=6.8.0",
 ]
 
 [[tool.uv.index]]
