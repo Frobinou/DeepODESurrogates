@@ -3,11 +3,11 @@ from pathlib import Path
 from deep_ode_surrogates.application.simulate_ode import SimulateODEUseCase
 from deep_ode_surrogates.application.generate_ode_dataset import GenerateODEDatasetUseCase
 from deep_ode_surrogates.infrastructure.solvers.scipy_ode_solver import ScipyODESolver
-from deep_ode_surrogates.infrastructure.persistence.parquet_dataset_writer import ParquetDatasetWriter
-from deep_ode_surrogates.application.config.enums import AvailablesODE
+from deep_ode_surrogates.infrastructure.data.parquet.parquet_dataset_writer import ParquetDatasetWriter
+from deep_ode_surrogates.application.config.ode import AvailablesODE
 from deep_ode_surrogates.domain.odes.ode_lotka_voltera import ParamsLotkaVolterra
 from deep_ode_surrogates.infrastructure.registries.ode_registry import ode_registry
-from deep_ode_surrogates.infrastructure.visualization.trajectory_plots import plot_phase_space, plot_trajectory
+from deep_ode_surrogates.infrastructure.visualization.plotly.trajectory_plots import plot_phase_space, plot_trajectory
 
 solver = ScipyODESolver()
 simulator = SimulateODEUseCase(solver)
