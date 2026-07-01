@@ -7,12 +7,9 @@ from deep_ode_surrogates.infrastructure.factories.trainer_factory import build_t
 from deep_ode_surrogates.infrastructure.factories.callback_factory import build_callbacks
 from deep_ode_surrogates.infrastructure.factories.evaluator_factory import build_evaluators
 from deep_ode_surrogates.infrastructure.persistence.experiments.experiment_io import save_experiment
-from deep_ode_surrogates.infrastructure.training.schemas import TrainingPipeline
+from deep_ode_surrogates.application.config.training import TrainingPipeline
 from deep_ode_surrogates.application.config.experiment import ExperimentConfig
 
-from deep_ode_surrogates.infrastructure.registries.bootstrap import bootstrap
-
-bootstrap()
 
 def build_training_pipeline(
     experiment_config: ExperimentConfig,

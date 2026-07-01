@@ -1,0 +1,9 @@
+from typing import Protocol
+
+class DataLoaderPort(Protocol):
+    @property
+    def train_loader(self): ...
+    @property
+    def val_loader(self): ...
+    @property
+    def test_loader(self): ...

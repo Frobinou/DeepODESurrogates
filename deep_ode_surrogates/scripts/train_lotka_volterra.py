@@ -22,6 +22,9 @@ from deep_ode_surrogates.infrastructure.factories.training_pipeline_factory impo
 )
 from deep_ode_surrogates.infrastructure.logging.logger import setup_logger
 
+from deep_ode_surrogates.infrastructure.registries.bootstrap import bootstrap
+bootstrap()
+
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 ode_config = ODESConfig(
