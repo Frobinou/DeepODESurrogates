@@ -20,23 +20,29 @@ class PINNLoss:
 
     # ── Internal helpers ──────────────────────────────────────────────────────
 
-    def _compute_derivative(self, y_pred: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
-        """
-        Compute dy/dt via autograd.
+    def _compute_derivative(
+        self,
+        y_pred: torch.Tensor,
+        t: torch.Tensor,
+    ) -> torch.Tensor:
+        derivatives = []
 
-        Args:
-            y_pred: Network output of shape (N, n_vars).
-            t:      Collocation points of shape (N, 1), requires_grad=True.
+        for variable_index in range(y_pred.shape[1]):
+            y_variable = y_pred[:, variable_index:variable_index + 1]
 
-        Returns:
-            Gradient tensor of shape (N, n_vars).
-        """
-        return torch.autograd.grad(
-            outputs=y_pred,
-            inputs=t,
-            grad_outputs=torch.ones_like(y_pred),
-            create_graph=True,
-        )[0]
+            dy_variable_dt = torch.autograd.grad(
+                outputs=y_variable,
+                inputs=t,
+                grad_outputs=torch.ones_like(y_variable),
+                create_graph=True,
+                retain_graph=True,
+            )[0]
+
+            derivatives.append(dy_variable_dt)
+
+        return torch.cat(derivatives, dim=1)
+
+
 
     def _physics_loss(self, model: torch.nn.Module, t: torch.Tensor) -> torch.Tensor:
         """
@@ -73,31 +79,23 @@ class PINNLoss:
         return ((y_pred - y_obs) ** 2).mean()
 
     # ── Public interface ──────────────────────────────────────────────────────
-
     def __call__(
         self,
         model: torch.nn.Module,
         batch: dict,
         t: torch.Tensor,
     ) -> dict[str, torch.Tensor | None]:
-        """
-        Compute total loss and return a detailed breakdown.
 
-        Args:
-            model: PINN model.
-            batch: Dict with keys "x" and "y".
-            t:     Collocation points, requires_grad=True.
+        if t.ndim == 1:
+            t = t.unsqueeze(1)
 
-        Returns:
-            Dict with keys:
-                - "total"   : weighted sum (always present)
-                - "physics" : physics residual loss (None if lambda_ode == 0)
-                - "data"    : supervised data loss  (None if lambda_data == 0)
-        """
-        total = torch.tensor(0.0)
+        t = t.detach().clone().requires_grad_(True)
+
+        total = torch.zeros((), device=t.device)
+
         physics_loss = None
         data_loss = None
-        t = t.unsqueeze(1).requires_grad_(True)
+
         if self.lambda_ode > 0 and self.ode is not None:
             physics_loss = self._physics_loss(model, t)
             total = total + self.lambda_ode * physics_loss
@@ -107,7 +105,7 @@ class PINNLoss:
             total = total + self.lambda_data * data_loss
 
         return {
-            "total":   total,
+            "total": total,
             "physics": physics_loss,
-            "data":    data_loss,
+            "data": data_loss,
         }
