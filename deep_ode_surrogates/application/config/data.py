@@ -10,6 +10,9 @@ class DataConfig(BaseModel):
     data_path: Path
     input_cols: list[str]
     target_cols: list[str]
+    run_id_col: str = Field(
+        "run_id", description="Column name for the trajectory/run ID in the dataset."
+    )
     batch_size: int = Field(32, gt=0)
     train_ratio: float = Field(0.7, gt=0.0, lt=1.0)
     val_ratio: float = Field(0.15, gt=0.0, lt=1.0)

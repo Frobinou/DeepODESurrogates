@@ -67,7 +67,10 @@ class Trainer:
             self.last_loss = epoch_loss
             self.state["loss"] = {
                 "total": loss_dict.get("total", torch.tensor(0.0)).detach(),
-                "ode": loss_dict.get("ode").detach() if loss_dict.get("ode") is not None else None,
+                "physics": loss_dict.get("physics").detach()
+                if loss_dict.get("physics") is not None
+                else None,
+                "ic": loss_dict.get("ic").detach() if loss_dict.get("ic") is not None else None,
                 "data": loss_dict.get("data").detach()
                 if loss_dict.get("data") is not None
                 else None,
@@ -81,8 +84,12 @@ class Trainer:
             for cb in self.callbacks:
                 cb.on_epoch_end(self, epoch)
 
-            for ev in self.evaluators:
-                ev.run(self)
+            if self.epoch_step % 10 == 0:
+                for ev in self.evaluators:
+                    evaluation_results = ev.run(self)
+
+                    for cb in self.callbacks:
+                        cb.on_evaluation_end(self, evaluation_results)
 
         for cb in self.callbacks:
             cb.on_train_end(self)

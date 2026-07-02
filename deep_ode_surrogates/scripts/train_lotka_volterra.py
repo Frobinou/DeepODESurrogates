@@ -27,14 +27,14 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 ode_config = ODESConfig(
     ode_name="lotka_volterra",
     parameters=ParamsLotkaVolterra(
-        alpha=0.67,
-        beta=1.33,
-        delta=1.0,
-        gamma=1.0,
+        alpha=1.0,
+        beta=0.1,
+        delta=0.075,
+        gamma=1.5,
     ),
-    grid_size=200,
-    t_span=(0.0, 50.0),
-    initial_conditions=[1.0, 1.0],
+    grid_size=2000,
+    t_span=(0.0, 10.0),
+    initial_conditions=[10.0, 1.0],
     dimension=2,
 )
 
@@ -60,7 +60,8 @@ training_config = TrainingConfig(
 physics_weights = PhysicsWeights(
     name=AvailablesLoss.PINN_LOSS,
     lambda_ode=1.0,
-    lambda_data=1.0,
+    lambda_data=0.0,
+    lambda_ic=1.0,
 )
 
 callbacks = CallbackConfig(

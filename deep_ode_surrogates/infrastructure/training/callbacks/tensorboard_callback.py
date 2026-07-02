@@ -9,10 +9,12 @@ class TensorBoardCallback(Callback):
         log_dir: str,
         log_frequency: int = 10,
         log_gradients: bool = True,
+        log_figures_frequency: int = 100,
     ):
         self.writer = SummaryWriter(log_dir)
         self.log_frequency = log_frequency
         self.log_gradients = log_gradients
+        self.log_figures_frequency = log_figures_frequency
 
     # -------------------------
     # Hooks
@@ -40,7 +42,9 @@ class TensorBoardCallback(Callback):
         figures = evaluation_results.get("figures", {})
 
         self.log_dict(metrics, step, prefix="Evaluation")
-        self.log_plotly_figures(figures, step, prefix="Evaluation")
+
+        if step % self.log_figures_frequency == 0:
+            self.log_plotly_figures(figures, step, prefix="Evaluation")
 
     def on_epoch_start(self, trainer, epoch):
         return super().on_epoch_start(trainer, epoch)
@@ -54,36 +58,34 @@ class TensorBoardCallback(Callback):
 
     def _log_losses(self, trainer):
         step = trainer.epoch_step
-
-        loss_dict = getattr(trainer, "last_losses", None)
+        loss_dict = getattr(trainer.state, "loss", None)
 
         if loss_dict is None:
             return
 
-        # total loss
-        self.writer.add_scalar(
-            "Training/loss/total",
-            loss_dict["total"].item(),
-            step,
-        )
+        losses_to_group = {}
 
-        # physics loss
-        if "physics" in loss_dict and loss_dict["physics"] is not None:
-            self.writer.add_scalar(
-                "Training/loss/physics",
-                loss_dict["physics"].item(),
+        for name in ["total", "physics", "data", "ic"]:
+            value = loss_dict.get(name)
+
+            if value is not None:
+                scalar_value = value.item()
+
+                self.writer.add_scalar(
+                    f"Training/loss/{name}",
+                    scalar_value,
+                    step,
+                )
+
+                losses_to_group[name] = scalar_value
+
+        if losses_to_group:
+            self.writer.add_scalars(
+                "Training/losses",
+                losses_to_group,
                 step,
             )
 
-        # data loss
-        if "data" in loss_dict and loss_dict["data"] is not None:
-            self.writer.add_scalar(
-                "Training/loss/data",
-                loss_dict["data"].item(),
-                step,
-            )
-
-        # residuals
         residuals = loss_dict.get("residuals", None)
 
         if residuals is not None:
