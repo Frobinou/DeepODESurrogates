@@ -1,13 +1,9 @@
 import numpy as np
+import plotly.express as px
 import plotly.graph_objects as go
 
-colors = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-]
+GT_COLOR = px.colors.qualitative.Plotly[0]  # bleu
+PRED_COLOR = px.colors.qualitative.Plotly[1]  # orange
 
 
 def _as_2d_y(y: np.ndarray) -> np.ndarray:
@@ -41,7 +37,7 @@ def plot_trajectory(
     fig = go.Figure()
 
     for i, name in enumerate(state_names):
-        color = colors[i % len(colors)]
+        color = px.colors.qualitative.Plotly[i]
         fig.add_trace(go.Scatter(x=t, y=y[:, i], mode="lines", name=name, line={"color": color}))
 
         if y_pred is not None:
@@ -91,6 +87,7 @@ def plot_phase_space(
             y=y[:, y_idx],
             mode="lines",
             name="ground truth",
+            line={"color": GT_COLOR},
         )
     )
 
@@ -121,7 +118,7 @@ def plot_phase_space(
                 y=y_pred[:, y_idx],
                 mode="lines",
                 name="prediction",
-                line={"dash": "dash"},
+                line={"dash": "dash", "color": PRED_COLOR},
             )
         )
 

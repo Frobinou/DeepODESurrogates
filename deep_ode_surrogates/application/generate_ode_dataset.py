@@ -48,7 +48,7 @@ class GenerateODEDatasetUseCase:
                 x0=np.asarray(current_x0, dtype=float),
                 t_span=t_span,
                 n_steps=n_steps,
-                run_id=None if single_run else run_id,
+                run_id=run_id,
             )
 
             df = pd.DataFrame(trajectory.y, columns=self.target_cols)
@@ -63,8 +63,7 @@ class GenerateODEDatasetUseCase:
             for key, value in params_dict.items():
                 df[key] = value
 
-            if trajectory.run_id is not None:
-                df["run_id"] = trajectory.run_id
+            df["run_id"] = trajectory.run_id
 
             rows.append(df)
 

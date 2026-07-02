@@ -50,6 +50,6 @@ fig_phase = plot_phase_space(
 )
 fig_phase.show()
 
-path = Path("data/generated_dataset_LV.parquet")
+path = Path("data") / "generated_dataset_LV.parquet"
 writer = ParquetDatasetWriter()
 writer.save(df, path)

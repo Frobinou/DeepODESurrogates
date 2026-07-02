@@ -40,7 +40,7 @@ ode_config = ODESConfig(
 
 data_config = DataConfig(
     type="parquet",
-    data_path=Path("data\lotka_volterra.parquet"),
+    data_path=Path("data") / "generated_dataset_LV.parquet",
     input_cols=["t"],
     target_cols=["prey", "predator"],
     batch_size=64,

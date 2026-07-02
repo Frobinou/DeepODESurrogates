@@ -15,7 +15,7 @@ class TrajectoryEvaluator:
 
     def run(self, trainer):
         batch = next(iter(self.data_loader.test_loader))
-
+        print(batch.keys())
         x = batch["x"].to(trainer.device)
         y_true = batch["y"].to(trainer.device)
 
