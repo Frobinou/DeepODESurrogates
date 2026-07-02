@@ -1,6 +1,14 @@
 import numpy as np
 import plotly.graph_objects as go
 
+colors = [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+]
+
 
 def _as_2d_y(y: np.ndarray) -> np.ndarray:
     y = np.asarray(y)
@@ -33,7 +41,8 @@ def plot_trajectory(
     fig = go.Figure()
 
     for i, name in enumerate(state_names):
-        fig.add_trace(go.Scatter(x=t, y=y[:, i], mode="lines", name=name))
+        color = colors[i % len(colors)]
+        fig.add_trace(go.Scatter(x=t, y=y[:, i], mode="lines", name=name, line={"color": color}))
 
         if y_pred is not None:
             y_pred = _as_2d_y(y_pred)
@@ -43,7 +52,7 @@ def plot_trajectory(
                     y=y_pred[:, i],
                     mode="lines",
                     name=f"{name} pred",
-                    line={"dash": "dash"},
+                    line={"dash": "dash", "color": color},
                 )
             )
 

@@ -23,16 +23,31 @@ class TrajectoryEvaluator:
         with torch.no_grad():
             y_pred = trainer.model(x)
 
+        order = torch.argsort(x[:, 0])
+        x = x[order]
+        y_true = y_true[order]
+        y_pred = y_pred[order]
+
+        if x.shape[0] > self.max_points:
+            indices = torch.linspace(
+                0,
+                x.shape[0] - 1,
+                self.max_points,
+                dtype=torch.long,
+                device=x.device,
+            )
+            x = x[indices]
+            y_true = y_true[indices]
+            y_pred = y_pred[indices]
+
         t = x[:, 0].detach().cpu().numpy()
         y_true_np = y_true.detach().cpu().numpy()
         y_pred_np = y_pred.detach().cpu().numpy()
 
-        t = t[: self.max_points]
-        y_true_np = y_true_np[: self.max_points]
-        y_pred_np = y_pred_np[: self.max_points]
-
         figures = {
-            "trajectory": plot_trajectory(t=t, y=y_true_np, y_pred=y_pred_np),
+            "trajectory": plot_trajectory(
+                t=t, y=y_true_np, y_pred=y_pred_np, state_names=self.data_loader.state_names
+            ),
         }
 
         if y_true_np.shape[1] >= 2:

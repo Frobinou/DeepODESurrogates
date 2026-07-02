@@ -49,6 +49,10 @@ class ParquetDataLoader(BaseDataLoader):
         self.target_cols = data_config.target_cols
         super().__init__(data_config=data_config)  # déclenche build_dataset() + split
 
+    @property
+    def state_names(self):
+        return self.target_cols
+
     def build_dataset(self) -> Dataset:
         return ParquetDataset(
             parquet_path=self.parquet_path,
