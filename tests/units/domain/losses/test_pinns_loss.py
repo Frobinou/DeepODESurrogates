@@ -71,7 +71,7 @@ def test_physics_loss_is_zero_when_model_satisfies_ode():
     t = torch.linspace(0, 1, 10).reshape(-1, 1)
     t.requires_grad_(True)
 
-    physics_loss = loss._physics_loss(model, t)
+    physics_loss, _ = loss._physics_loss(model, t)
 
     torch.testing.assert_close(
         physics_loss,
@@ -92,7 +92,7 @@ def test_physics_loss_is_positive_when_model_does_not_satisfy_ode():
     t = torch.linspace(0, 1, 10).reshape(-1, 1)
     t.requires_grad_(True)
 
-    physics_loss = loss._physics_loss(model, t)
+    physics_loss, _ = loss._physics_loss(model, t)
 
     assert physics_loss.item() > 0.0
 
@@ -139,17 +139,15 @@ def test_data_loss_is_positive_when_prediction_differs_from_observation():
 
 
 def test_total_loss_combines_physics_and_data_terms():
-    loss = PINNLoss(
-        ode=WrongConstantODE(),
-        lambda_ode=2.0,
-        lambda_data=3.0,
-    )
+    loss = PINNLoss(ode=WrongConstantODE(), lambda_ode=2.0, lambda_data=3.0, lambda_ic=0.0)
 
     model = LinearModel()
 
     batch = {
         "x": torch.tensor([[0.0], [1.0]], dtype=torch.float32),
         "y": torch.zeros((2, 2), dtype=torch.float32),
+        "x0": torch.tensor([[0.0]], dtype=torch.float32),
+        "y0": torch.tensor([[0.0, 1.0]], dtype=torch.float32),
     }
 
     t = torch.linspace(0, 1, 5)
@@ -169,17 +167,15 @@ def test_total_loss_combines_physics_and_data_terms():
 
 
 def test_physics_loss_is_none_when_lambda_ode_is_zero():
-    loss = PINNLoss(
-        ode=WrongConstantODE(),
-        lambda_ode=0.0,
-        lambda_data=1.0,
-    )
+    loss = PINNLoss(ode=WrongConstantODE(), lambda_ode=0.0, lambda_data=1.0, lambda_ic=0.0)
 
     model = LinearModel()
 
     batch = {
         "x": torch.tensor([[0.0], [1.0]], dtype=torch.float32),
         "y": torch.zeros((2, 2), dtype=torch.float32),
+        "x0": torch.tensor([[0.0]], dtype=torch.float32),
+        "y0": torch.tensor([[0.0, 1.0]], dtype=torch.float32),
     }
 
     loss_dict = loss(
@@ -197,11 +193,7 @@ def test_physics_loss_is_none_when_lambda_ode_is_zero():
 
 
 def test_data_loss_is_none_when_lambda_data_is_zero():
-    loss = PINNLoss(
-        ode=WrongConstantODE(),
-        lambda_ode=1.0,
-        lambda_data=0.0,
-    )
+    loss = PINNLoss(ode=WrongConstantODE(), lambda_ode=1.0, lambda_data=0.0, lambda_ic=0.0)
 
     model = LinearModel()
 
@@ -220,11 +212,7 @@ def test_data_loss_is_none_when_lambda_data_is_zero():
 
 
 def test_t_can_be_1d_or_2d():
-    loss = PINNLoss(
-        ode=ConstantODE(),
-        lambda_ode=1.0,
-        lambda_data=0.0,
-    )
+    loss = PINNLoss(ode=ConstantODE(), lambda_ode=1.0, lambda_data=0.0, lambda_ic=0.0)
 
     model = LinearModel()
 

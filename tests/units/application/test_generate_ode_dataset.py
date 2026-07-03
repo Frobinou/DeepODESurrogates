@@ -61,9 +61,9 @@ def test_generate_dataset_with_fixed_params_and_fixed_x0():
 
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 3
-    assert "run_id" not in df.columns
+    assert "run_id" in df.columns
 
-    assert list(df.columns) == ["x", "y", "t", "alpha", "beta"]
+    assert list(df.columns) == ["x", "y", "t", "alpha", "beta", "run_id"]
 
     np.testing.assert_allclose(df["t"].values, [0.0, 0.5, 1.0])
     np.testing.assert_allclose(df["x"].values, [1.0, 1.5, 2.0])
