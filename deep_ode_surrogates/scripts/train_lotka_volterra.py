@@ -28,7 +28,7 @@ from deep_ode_surrogates.infrastructure.training.schemas import CallbackConfig
 bootstrap()
 
 # Create Experiment FOLDER DIRECTORY
-timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 EXPERIMENT_DIR = Path("runs") / "lotka_volterra" / f"experiment_{timestamp}"
 EXPERIMENT_DIR.mkdir(parents=True, exist_ok=True)
@@ -62,7 +62,7 @@ data_config = DataConfig(
 
 training_config = TrainingConfig(
     lr=1e-3,
-    epochs=100,
+    epochs=300,
     checkpoint_k=5,
     model_name=AvailablesAIModel.BASIC_PINN,
     optimizer="Adam",
