@@ -1,23 +1,21 @@
-from abc import ABC, abstractmethod
-
-
-class Callback(ABC):
-    @abstractmethod
+class Callback:
     def on_train_start(self, trainer):
         pass
 
-    @abstractmethod
+    def on_train_end(self, trainer):
+        pass
+
     def on_epoch_start(self, trainer, epoch):
         pass
 
-    @abstractmethod
-    def on_batch_end(self, trainer, loss):
-        pass
-
-    @abstractmethod
     def on_epoch_end(self, trainer, epoch):
         pass
 
-    @abstractmethod
-    def on_train_end(self, trainer):
+    def on_batch_end(self, trainer, loss):
+        pass
+
+    def on_evaluation_end(self, trainer, evaluation_results):
+        pass
+
+    def on_teardown(self, trainer):
         pass

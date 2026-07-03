@@ -14,6 +14,7 @@ class PhysicsWeights(BaseModel):
     name: AvailablesLoss = AvailablesLoss.PINN_LOSS
     lambda_ode: float = Field(1.0, ge=0.0)
     lambda_data: float = Field(1.0, ge=0.0)
+    lambda_ic: float = Field(1.0, ge=0.0)
 
 
 class ExperimentConfig(BaseModel):

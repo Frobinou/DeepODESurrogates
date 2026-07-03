@@ -1,18 +1,18 @@
 from torch.utils.tensorboard import SummaryWriter
 
 from deep_ode_surrogates.infrastructure.training.callbacks.base import Callback
+from deep_ode_surrogates.infrastructure.training.callbacks.schemas import TensorboardCallbackConfig
 
 
 class TensorBoardCallback(Callback):
     def __init__(
         self,
-        log_dir: str,
-        log_frequency: int = 10,
-        log_gradients: bool = True,
+        config: TensorboardCallbackConfig,
     ):
-        self.writer = SummaryWriter(log_dir)
-        self.log_frequency = log_frequency
-        self.log_gradients = log_gradients
+        self.writer = SummaryWriter(config.log_dir)
+        self.log_frequency = config.log_frequency
+        self.log_gradients = config.log_gradients
+        self.log_figures_frequency = config.log_figures_frequency
 
     # -------------------------
     # Hooks
@@ -28,6 +28,9 @@ class TensorBoardCallback(Callback):
             self._log_gradients(trainer)
 
     def on_train_end(self, trainer):
+        pass
+
+    def on_teardown(self, trainer):
         self.writer.close()
 
     def on_batch_end(self, trainer, loss):
@@ -35,50 +38,79 @@ class TensorBoardCallback(Callback):
 
     def on_evaluation_end(self, trainer, evaluation_results):
         step = trainer.epoch_step
-        self.log_dict(evaluation_results, step, prefix="Evaluation")
+
+        metrics = evaluation_results.get("metrics", {})
+        figures = evaluation_results.get("figures", {})
+
+        self.log_dict(metrics, step, prefix="Evaluation")
+
+        if step % self.log_figures_frequency == 0:
+            self.log_plotly_figures(figures, step, prefix="Evaluation")
 
     def on_epoch_start(self, trainer, epoch):
         return super().on_epoch_start(trainer, epoch)
 
     def on_train_start(self, trainer):
+        self._log_experiment_info(trainer)
+
+        layout = {
+            "Training": {
+                "losses": [
+                    "Multiline",
+                    [
+                        "Training/loss/total",
+                        "Training/loss/physics",
+                        "Training/loss/ic",
+                        "Training/loss/data",
+                    ],
+                ],
+            },
+        }
+        self.writer.add_custom_scalars(layout)
         return super().on_train_start(trainer)
 
     # -------------------------
     # Core logging
     # -------------------------
 
+    def _log_experiment_info(self, trainer):
+        model_name = trainer.model.__class__.__name__
+        loss_name = trainer.loss_fn.__class__.__name__
+
+        rows = [
+            ("Modèle", model_name),
+            ("Loss", loss_name),
+        ]
+
+        for attr, label in (
+            ("lambda_ode", "lambda_ode (physics)"),
+            ("lambda_data", "lambda_data"),
+            ("lambda_ic", "lambda_ic"),
+        ):
+            if hasattr(trainer.loss_fn, attr):
+                rows.append((label, str(getattr(trainer.loss_fn, attr))))
+
+        markdown = "| Paramètre | Valeur |\n|---|---|\n"
+        markdown += "\n".join(f"| {key} | `{value}` |" for key, value in rows)
+
+        self.writer.add_text("Experiment/info", markdown, global_step=0)
+
     def _log_losses(self, trainer):
         step = trainer.epoch_step
-
-        loss_dict = getattr(trainer, "last_losses", None)
+        loss_dict = trainer.state.get("loss", None)
 
         if loss_dict is None:
             return
 
-        # total loss
-        self.writer.add_scalar(
-            "Training/loss/total",
-            loss_dict["total"].item(),
-            step,
-        )
+        for name in ["total", "physics", "data", "ic"]:
+            value = loss_dict.get(name)
 
-        # physics loss
-        if "ode" in loss_dict and loss_dict["ode"] is not None:
-            self.writer.add_scalar(
-                "Training/loss/physics",
-                loss_dict["ode"].item(),
-                step,
-            )
-
-        # data loss
-        if "data" in loss_dict and loss_dict["data"] is not None:
-            self.writer.add_scalar(
-                "Training/loss/data",
-                loss_dict["data"].item(),
-                step,
-            )
-
-        # residuals
+            if value is not None:
+                self.writer.add_scalar(
+                    f"Training/loss/{name}",
+                    value.item(),
+                    step,
+                )
         residuals = loss_dict.get("residuals", None)
 
         if residuals is not None:
@@ -133,3 +165,21 @@ class TensorBoardCallback(Callback):
                     value,
                     step,
                 )
+
+    def log_plotly_figures(self, figures: dict, step: int, prefix: str = "Evaluation"):
+        import io
+
+        import numpy as np
+        from PIL import Image
+
+        for key, fig in figures.items():
+            png_bytes = fig.to_image(format="png")
+            image = Image.open(io.BytesIO(png_bytes))
+            image = np.asarray(image)
+
+            self.writer.add_image(
+                f"{prefix}/{key}",
+                image,
+                global_step=step,
+                dataformats="HWC",
+            )

@@ -2,13 +2,14 @@ from deep_ode_surrogates.infrastructure.persistence.checkpoints.checkpoint_manag
     CheckpointManager,
 )
 from deep_ode_surrogates.infrastructure.training.callbacks.base import Callback
+from deep_ode_surrogates.infrastructure.training.callbacks.schemas import CheckpointCallbackConfig
 
 
 class CheckpointCallback(Callback):
     """Saves top-k checkpoints at the end of each epoch."""
 
-    def __init__(self, manager: CheckpointManager):
-        self.manager = manager
+    def __init__(self, config=CheckpointCallbackConfig):
+        self.manager = CheckpointManager(save_dir=config.save_dir, top_k=config.top_k)
 
     def on_epoch_end(self, trainer, epoch: int) -> None:
         self.manager.save_top_k_checkpoint(

@@ -9,6 +9,9 @@ def setup_logger():
         level=logging.INFO,
     )
 
+    logging.getLogger("kaleido").setLevel(logging.WARNING)
+    logging.getLogger("choreographer").setLevel(logging.WARNING)
+
     structlog.configure(
         processors=[
             structlog.processors.TimeStamper(fmt="iso"),
@@ -21,3 +24,6 @@ def setup_logger():
     )
 
     return structlog.get_logger()
+
+
+logger = setup_logger()

@@ -1,11 +1,14 @@
 from deep_ode_surrogates.infrastructure.training.callbacks.base import Callback
+from deep_ode_surrogates.infrastructure.training.callbacks.schemas import (
+    EarlyStoppingCallbackConfig,
+)
 
 
 class EarlyStoppingCallback(Callback):
-    def __init__(self, patience=20):
-        self.best = float("inf")
+    def __init__(self, config: EarlyStoppingCallbackConfig):
+        self.best = config.best
         self.counter = 0
-        self.patience = patience
+        self.patience = config.patience
 
     def on_epoch_end(self, trainer, epoch):
         if trainer.last_loss < self.best:

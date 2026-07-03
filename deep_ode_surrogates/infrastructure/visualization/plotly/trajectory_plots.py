@@ -1,5 +1,9 @@
 import numpy as np
+import plotly.express as px
 import plotly.graph_objects as go
+
+GT_COLOR = px.colors.qualitative.Plotly[0]  # bleu
+PRED_COLOR = px.colors.qualitative.Plotly[1]  # orange
 
 
 def _as_2d_y(y: np.ndarray) -> np.ndarray:
@@ -19,6 +23,7 @@ def plot_trajectory(
     y: np.ndarray,
     y_pred: np.ndarray | None = None,
     state_names: list[str] | None = None,
+    train_t: np.ndarray | None = None,  # <-- ce paramètre manque chez toi
     title: str = "Trajectory",
 ) -> go.Figure:
     t = np.asarray(t)
@@ -33,7 +38,17 @@ def plot_trajectory(
     fig = go.Figure()
 
     for i, name in enumerate(state_names):
-        fig.add_trace(go.Scatter(x=t, y=y[:, i], mode="lines", name=name))
+        color = px.colors.qualitative.Plotly[i]
+        fig.add_trace(
+            go.Scatter(
+                x=t,
+                y=y[:, i],
+                mode="lines+markers",
+                name=name,
+                line={"color": color},
+                marker={"size": 6, "color": color},
+            )
+        )
 
         if y_pred is not None:
             y_pred = _as_2d_y(y_pred)
@@ -41,9 +56,10 @@ def plot_trajectory(
                 go.Scatter(
                     x=t,
                     y=y_pred[:, i],
-                    mode="lines",
+                    mode="lines+markers",
                     name=f"{name} pred",
-                    line={"dash": "dash"},
+                    line={"dash": "dash", "color": color},
+                    marker={"size": 6, "symbol": "x", "color": color},
                 )
             )
 
@@ -82,6 +98,7 @@ def plot_phase_space(
             y=y[:, y_idx],
             mode="lines",
             name="ground truth",
+            line={"color": GT_COLOR},
         )
     )
 
@@ -112,7 +129,7 @@ def plot_phase_space(
                 y=y_pred[:, y_idx],
                 mode="lines",
                 name="prediction",
-                line={"dash": "dash"},
+                line={"dash": "dash", "color": PRED_COLOR},
             )
         )
 

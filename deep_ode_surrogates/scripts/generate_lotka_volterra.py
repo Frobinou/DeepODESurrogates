@@ -29,7 +29,7 @@ df = generator.execute(
     ode=ode,
     n_sims=1,
     x0=[10.0, 1.0],
-    n_steps=200,
+    n_steps=2000,
     t_span=(0.0, 10.0),
 )
 
@@ -50,6 +50,6 @@ fig_phase = plot_phase_space(
 )
 fig_phase.show()
 
-path = Path("data/generated_dataset_LV.parquet")
+path = Path("data") / "generated_dataset_LV.parquet"
 writer = ParquetDatasetWriter()
 writer.save(df, path)
