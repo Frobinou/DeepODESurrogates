@@ -1,6 +1,10 @@
 import torch
 
 from deep_ode_surrogates.infrastructure.training.evaluator.base import Evaluator
+from deep_ode_surrogates.infrastructure.training.evaluator.schemas import (
+    EvaluatorResults,
+    MetricName,
+)
 
 
 class MSEEvaluator(Evaluator):
@@ -19,11 +23,9 @@ class MSEEvaluator(Evaluator):
                 batch = {k: v.to(trainer.device) for k, v in batch.items()}
                 x = batch["x"]
                 y_true = batch["y"]
-
                 y_pred = model(x)
 
                 mse = ((y_pred - y_true) ** 2).mean()
-
                 total_mse += mse.item()
                 n += 1
 
@@ -33,9 +35,4 @@ class MSEEvaluator(Evaluator):
 
         model.train()
 
-        return {
-            "metrics": {
-                "mse": mse,
-            },
-            "figures": {},
-        }
+        return EvaluatorResults(metrics={MetricName.MSE: mse})

@@ -64,11 +64,11 @@ def build_trainer(
 
     model = model_registry.create(
         training_config.model_name,
-        input_dim=1,  # Because for ODEs, the input is usually time t, which is 1D
-        output_dim=ode_config.dimension,
+        input_dim=training_config.input_dim,
+        output_dim=training_config.output_dim,
     )
 
-    loss = loss_registry.create(name=loss_config.name, ode=ode, loss_config=loss_config)
+    loss = loss_registry.create(name=loss_config.name, ode=ode, config=loss_config, device=device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=training_config.lr)
 
@@ -77,5 +77,6 @@ def build_trainer(
         optimizer=optimizer,
         loss_fn=loss,
         device=device,
-        t=torch.linspace(ode_config.t_span[0], ode_config.t_span[1], ode_config.grid_size),
+        time_grid=torch.linspace(ode_config.t_span[0], ode_config.t_span[1], ode_config.grid_size),
+        evaluators_frequency=training_config.evaluators_frequency,
     )

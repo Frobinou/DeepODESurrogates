@@ -19,7 +19,7 @@ class TensorBoardCallback(Callback):
     # -------------------------
 
     def on_epoch_end(self, trainer, epoch):
-        if trainer.epoch_step % self.log_frequency != 0:
+        if trainer.current_state.get_step() % self.log_frequency != 0:
             return
 
         self._log_losses(trainer)
@@ -37,7 +37,7 @@ class TensorBoardCallback(Callback):
         return super().on_batch_end(trainer, loss)
 
     def on_evaluation_end(self, trainer, evaluation_results):
-        step = trainer.epoch_step
+        step = trainer.current_state.get_step()
 
         metrics = evaluation_results.get("metrics", {})
         figures = evaluation_results.get("figures", {})
@@ -96,22 +96,17 @@ class TensorBoardCallback(Callback):
         self.writer.add_text("Experiment/info", markdown, global_step=0)
 
     def _log_losses(self, trainer):
-        step = trainer.epoch_step
-        loss_dict = trainer.state.get("loss", None)
+        step = trainer.current_state.get_step()
 
-        if loss_dict is None:
-            return
+        loss_dict = trainer.current_state.get_loss()
+        for name, value in loss_dict.items():
+            self.writer.add_scalar(
+                f"Training/loss/{name}",
+                value.item(),
+                step,
+            )
 
-        for name in ["total", "physics", "data", "ic"]:
-            value = loss_dict.get(name)
-
-            if value is not None:
-                self.writer.add_scalar(
-                    f"Training/loss/{name}",
-                    value.item(),
-                    step,
-                )
-        residuals = loss_dict.get("residuals", None)
+        residuals = trainer.current_state.get_residuals()
 
         if residuals is not None:
             var_names = getattr(trainer, "var_names", None)
@@ -148,7 +143,7 @@ class TensorBoardCallback(Callback):
         self.writer.add_scalar(
             "Training/gradients/global_norm",
             total_norm,
-            trainer.epoch_step,
+            trainer.current_state.get_step(),
         )
 
     # -------------------------

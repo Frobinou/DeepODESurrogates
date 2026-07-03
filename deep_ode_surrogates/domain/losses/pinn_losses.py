@@ -1,7 +1,9 @@
 import torch
 
+from deep_ode_surrogates.application.config.experiment import PhysicsWeights
 from deep_ode_surrogates.domain.losses import AvailablesLoss
 from deep_ode_surrogates.infrastructure.registries.loss_registry import register_loss
+from deep_ode_surrogates.infrastructure.training.torch.schemas import LossName
 
 
 @register_loss(AvailablesLoss.PINN_LOSS)
@@ -15,13 +17,14 @@ class PINNLoss:
         lambda_data:  Weight for the supervised data loss.
     """
 
-    def __init__(
-        self, ode=None, lambda_ode: float = 1.0, lambda_data: float = 1.0, lambda_ic: float = 1.0
-    ):
+    def __init__(self, device, ode=None, config: PhysicsWeights | None = None):
         self.ode = ode
-        self.lambda_ode = lambda_ode
-        self.lambda_data = lambda_data
-        self.lambda_ic = lambda_ic
+        if config is None:
+            config = PhysicsWeights()
+        self.lambda_ode = config.lambda_ode
+        self.lambda_data = config.lambda_data
+        self.lambda_ic = config.lambda_ic
+        self.device = device
 
     # ── Internal helpers ──────────────────────────────────────────────────────
 
@@ -61,6 +64,7 @@ class PINNLoss:
         Returns:
             Scalar loss tensor.
         """
+        t = t.detach().clone().requires_grad_(True)
         y_pred = model(t)
         dy_dt = self._compute_derivative(y_pred, t)
         residuals = (dy_dt - self.ode.torch_ode(y_pred)) ** 2
@@ -91,14 +95,11 @@ class PINNLoss:
         self,
         model: torch.nn.Module,
         batch: dict,
-        t: torch.Tensor,
+        time_grid: torch.Tensor,
     ) -> dict[str, torch.Tensor | None]:
-        if t.ndim == 1:
-            t = t.unsqueeze(1)
-
-        t = t.detach().clone().requires_grad_(True)
-
-        total = torch.zeros((), device=t.device)
+        if time_grid is not None and time_grid.ndim == 1:
+            time_grid = time_grid.unsqueeze(1)
+        total = torch.zeros((), device=self.device)
 
         physics_loss = None
         data_loss = None
@@ -106,7 +107,7 @@ class PINNLoss:
         residuals_tensor = None
 
         if self.lambda_ode > 0 and self.ode is not None:
-            physics_loss, residuals_tensor = self._physics_loss(model, t)
+            physics_loss, residuals_tensor = self._physics_loss(model, time_grid)
             total = total + self.lambda_ode * physics_loss
 
         if self.lambda_ic > 0 and self.ode is not None:
@@ -118,9 +119,9 @@ class PINNLoss:
             total = total + self.lambda_data * data_loss
 
         return {
-            "total": total,
-            "physics": physics_loss,
-            "data": data_loss,
-            "ic": initial_condition_loss,
-            "residuals": residuals_tensor,
+            LossName.TOTAL: total,
+            LossName.PHYSICS: physics_loss,
+            LossName.DATA: data_loss,
+            LossName.IC: initial_condition_loss,
+            LossName.RESIDUALS: residuals_tensor,
         }

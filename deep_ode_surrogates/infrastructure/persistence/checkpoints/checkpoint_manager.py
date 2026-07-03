@@ -21,25 +21,25 @@ class CheckpointManager:
     def save_top_k_checkpoint(
         self,
         epoch: int,
-        loss: float,
+        metric: float,
         model: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
         global_step: int,
     ) -> None:
-        path = self.save_dir / f"epoch_{epoch}_loss_{loss:.6f}.pt"
+        path = self.save_dir / f"epoch_{epoch}_loss_{metric:.6f}.pt"
 
         torch.save(
             {
                 "epoch": epoch,
                 "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
-                "loss": loss,
+                "metric": metric,
                 "global_step": global_step,
             },
             path,
         )
 
-        self.best_checkpoints.append((loss, path))
+        self.best_checkpoints.append((metric, path))
         self.best_checkpoints.sort(key=lambda x: x[0])
 
         if len(self.best_checkpoints) > self.top_k:
@@ -48,7 +48,7 @@ class CheckpointManager:
                 worst_path.unlink()
                 logger.info(f"Removed worst checkpoint: {worst_path}")
 
-        logger.info(f"Saved checkpoint (top-{self.top_k}): {path}")
+            # logger.info(f"Saved checkpoint (top-{self.top_k}): {path}")
 
     def load_checkpoint(
         self,
