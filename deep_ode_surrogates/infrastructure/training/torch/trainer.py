@@ -24,12 +24,13 @@ class Trainer:
         self.evaluators = []
         self.stop_training = False
 
-        self.current_state: EpochStats = EpochStats()
+        self.current_state: EpochStats = None
         self.dataloader = None
+        self.current_epoch: int = -1
 
     def _fit_batch(self, batch) -> None:
         self.optimizer.zero_grad()
-        loss_dict = self.loss_fn(self.model, batch, time_grid=self.time_grid)
+        loss_dict = self.loss_fn(self.model, batch, time_grid=self.time_grid.to(self.device))
         loss_dict["total"].backward()
         self.optimizer.step()
 
@@ -75,4 +76,5 @@ class Trainer:
             cb.on_teardown(self)
 
     def _reset_epoch_state(self):
+        self.current_epoch += 1
         self.current_state = EpochStats()

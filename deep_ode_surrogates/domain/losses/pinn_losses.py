@@ -3,7 +3,7 @@ import torch
 from deep_ode_surrogates.application.config.experiment import PhysicsWeights
 from deep_ode_surrogates.domain.losses import AvailablesLoss
 from deep_ode_surrogates.infrastructure.registries.loss_registry import register_loss
-from deep_ode_surrogates.infrastructure.training.torch.schemas import LossName
+from deep_ode_surrogates.infrastructure.training.torch.schemas import ScalarLossName, TensorLossName
 
 
 @register_loss(AvailablesLoss.PINN_LOSS)
@@ -119,9 +119,9 @@ class PINNLoss:
             total = total + self.lambda_data * data_loss
 
         return {
-            LossName.TOTAL: total,
-            LossName.PHYSICS: physics_loss,
-            LossName.DATA: data_loss,
-            LossName.IC: initial_condition_loss,
-            LossName.RESIDUALS: residuals_tensor,
+            ScalarLossName.TOTAL: total,
+            ScalarLossName.PHYSICS: physics_loss,
+            ScalarLossName.DATA: data_loss,
+            ScalarLossName.IC: initial_condition_loss,
+            TensorLossName.RESIDUALS: residuals_tensor,
         }

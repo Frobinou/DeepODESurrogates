@@ -19,7 +19,7 @@ class TensorBoardCallback(Callback):
     # -------------------------
 
     def on_epoch_end(self, trainer, epoch):
-        if trainer.current_state.get_step() % self.log_frequency != 0:
+        if trainer.current_epoch % self.log_frequency != 0:
             return
 
         self._log_losses(trainer)
@@ -37,15 +37,11 @@ class TensorBoardCallback(Callback):
         return super().on_batch_end(trainer, loss)
 
     def on_evaluation_end(self, trainer, evaluation_results):
-        step = trainer.current_state.get_step()
-
-        metrics = evaluation_results.get("metrics", {})
-        figures = evaluation_results.get("figures", {})
-
-        self.log_dict(metrics, step, prefix="Evaluation")
+        step = trainer.current_epoch
+        self.log_dict(evaluation_results.metrics, step, prefix="Evaluation")
 
         if step % self.log_figures_frequency == 0:
-            self.log_plotly_figures(figures, step, prefix="Evaluation")
+            self.log_plotly_figures(evaluation_results.figures, step, prefix="Evaluation")
 
     def on_epoch_start(self, trainer, epoch):
         return super().on_epoch_start(trainer, epoch)
@@ -96,15 +92,16 @@ class TensorBoardCallback(Callback):
         self.writer.add_text("Experiment/info", markdown, global_step=0)
 
     def _log_losses(self, trainer):
-        step = trainer.current_state.get_step()
+        step = trainer.current_epoch
 
-        loss_dict = trainer.current_state.get_loss()
+        loss_dict = trainer.current_state.get_losses()
         for name, value in loss_dict.items():
-            self.writer.add_scalar(
-                f"Training/loss/{name}",
-                value.item(),
-                step,
-            )
+            if value is not None:
+                self.writer.add_scalar(
+                    f"Training/loss/{name}",
+                    value.item(),
+                    step,
+                )
 
         residuals = trainer.current_state.get_residuals()
 
@@ -143,7 +140,7 @@ class TensorBoardCallback(Callback):
         self.writer.add_scalar(
             "Training/gradients/global_norm",
             total_norm,
-            trainer.current_state.get_step(),
+            trainer.current_epoch,
         )
 
     # -------------------------

@@ -67,7 +67,7 @@ class TrajectoryEvaluator(Evaluator):
         }
 
         if y_true_np.shape[1] >= 2:
-            FigureName.PHASE_SPACE = plot_phase_space(
+            figures[FigureName.PHASE_SPACE] = plot_phase_space(
                 y=y_true_np,
                 y_pred=y_pred_np,
             )

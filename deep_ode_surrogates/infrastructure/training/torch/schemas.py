@@ -11,18 +11,25 @@ except ImportError:
         pass
 
 
-class LossName(StrEnum):
+class ScalarLossName(StrEnum):
     TOTAL = "total"
     PHYSICS = "physics"
     IC = "ic"
     DATA = "data"
+
+
+class TensorLossName(StrEnum):
     RESIDUALS = "residuals"
 
 
 @dataclass
 class EpochStats:
-    loss_sums: dict[str, float] = field(default_factory=lambda: {name: 0.0 for name in LossName})
-    loss_counts: dict[str, int] = field(default_factory=lambda: {name: 0.0 for name in LossName})
+    loss_sums: dict[str, float] = field(
+        default_factory=lambda: {name: 0.0 for name in ScalarLossName}
+    )
+    loss_counts: dict[str, int] = field(
+        default_factory=lambda: {name: 0.0 for name in ScalarLossName}
+    )
     num_batches: int = 0
     residuals_sum: torch.Tensor | None = None
     residuals_count: int = 0
@@ -62,6 +69,14 @@ class EpochStats:
         )
 
         return state
+
+    def get_losses(self) -> dict:
+        state = self.as_loss_state()
+        return {name: state[name] for name in ScalarLossName}
+
+    def get_residuals(self) -> dict:
+        state = self.as_loss_state()
+        return state[TensorLossName.RESIDUALS]
 
     @property
     def epoch_loss(self) -> float:

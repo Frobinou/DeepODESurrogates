@@ -31,8 +31,4 @@ class MSEEvaluator(Evaluator):
 
         total_mse /= n
 
-        trainer.state["metrics"]["mse"] = total_mse
-
-        model.train()
-
-        return EvaluatorResults(metrics={MetricName.MSE: mse})
+        return EvaluatorResults(metrics={MetricName.MSE: total_mse})

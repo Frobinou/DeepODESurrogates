@@ -11,7 +11,7 @@ class EarlyStoppingCallback(Callback):
         self.patience = config.patience
 
     def on_epoch_end(self, trainer, epoch):
-        metric = trainer.current_state.get_metric()
+        metric = trainer.current_state.epoch_loss
         if metric < self.best:
             self.best = metric
             self.counter = 0
