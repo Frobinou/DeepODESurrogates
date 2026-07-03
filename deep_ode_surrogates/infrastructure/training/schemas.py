@@ -2,9 +2,14 @@
 
 from pydantic import BaseModel
 
+from deep_ode_surrogates.infrastructure.training.callbacks.schemas import (
+    CheckpointCallbackConfig,
+    EarlyStoppingCallbackConfig,
+    TensorboardCallbackConfig,
+)
+
 
 class CallbackConfig(BaseModel):
-    use_tensorboard: bool = True
-    use_checkpoint: bool = True
-    use_early_stopping: bool = True
-    early_stopping_patience: int = 10
+    tensorboard: TensorboardCallbackConfig | None = TensorboardCallbackConfig()
+    checkpoint: CheckpointCallbackConfig | None = CheckpointCallbackConfig()
+    early_stopping: EarlyStoppingCallbackConfig | None = EarlyStoppingCallbackConfig()

@@ -1,20 +1,19 @@
 # ── checkpoint_manager.py ─────────────────────────────────────────────────────
 
-import logging
 from pathlib import Path
 
 import torch
 
 from deep_ode_surrogates.application.config.experiment import ExperimentConfig
+from deep_ode_surrogates.infrastructure.logging.logger import logger
 
 
 class CheckpointManager:
     """Handles top-k checkpoint saving, loading, and config serialisation."""
 
-    def __init__(self, save_dir: Path, top_k: int, logger: logging.Logger):
+    def __init__(self, save_dir: Path, top_k: int):
         self.save_dir = save_dir
         self.top_k = top_k
-        self.logger = logger
         self.best_checkpoints: list[tuple[float, Path]] = []
 
         self.save_dir.mkdir(parents=True, exist_ok=True)
@@ -47,9 +46,9 @@ class CheckpointManager:
             _, worst_path = self.best_checkpoints.pop(-1)
             if worst_path.exists():
                 worst_path.unlink()
-                self.logger.info(f"Removed worst checkpoint: {worst_path}")
+                logger.info(f"Removed worst checkpoint: {worst_path}")
 
-        self.logger.info(f"Saved checkpoint (top-{self.top_k}): {path}")
+        logger.info(f"Saved checkpoint (top-{self.top_k}): {path}")
 
     def load_checkpoint(
         self,
@@ -62,11 +61,11 @@ class CheckpointManager:
         model.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         global_step = checkpoint.get("global_step", 0)
-        self.logger.info(f"Loaded checkpoint from {path} (epoch {checkpoint['epoch']})")
+        logger.info(f"Loaded checkpoint from {path} (epoch {checkpoint['epoch']})")
         return global_step
 
     def save_config(self, experiment: ExperimentConfig) -> None:
         """Serialise the full experiment config to save_dir/config.json."""
         path = self.save_dir / "config.json"
         path.write_text(experiment.model_dump_json(indent=4))
-        self.logger.info(f"Config saved: {path}")
+        logger.info(f"Config saved: {path}")

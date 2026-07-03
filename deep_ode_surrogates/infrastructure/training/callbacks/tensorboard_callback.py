@@ -1,20 +1,18 @@
 from torch.utils.tensorboard import SummaryWriter
 
 from deep_ode_surrogates.infrastructure.training.callbacks.base import Callback
+from deep_ode_surrogates.infrastructure.training.callbacks.schemas import TensorboardCallbackConfig
 
 
 class TensorBoardCallback(Callback):
     def __init__(
         self,
-        log_dir: str,
-        log_frequency: int = 10,
-        log_gradients: bool = True,
-        log_figures_frequency: int = 100,
+        config: TensorboardCallbackConfig,
     ):
-        self.writer = SummaryWriter(log_dir)
-        self.log_frequency = log_frequency
-        self.log_gradients = log_gradients
-        self.log_figures_frequency = log_figures_frequency
+        self.writer = SummaryWriter(config.log_dir)
+        self.log_frequency = config.log_frequency
+        self.log_gradients = config.log_gradients
+        self.log_figures_frequency = config.log_figures_frequency
 
     # -------------------------
     # Hooks
