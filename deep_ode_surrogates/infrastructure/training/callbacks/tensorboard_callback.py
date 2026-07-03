@@ -51,6 +51,8 @@ class TensorBoardCallback(Callback):
         return super().on_epoch_start(trainer, epoch)
 
     def on_train_start(self, trainer):
+        self._log_experiment_info(trainer)
+
         layout = {
             "Training": {
                 "losses": [
@@ -70,6 +72,29 @@ class TensorBoardCallback(Callback):
     # -------------------------
     # Core logging
     # -------------------------
+
+    def _log_experiment_info(self, trainer):
+        model_name = trainer.model.__class__.__name__
+        loss_name = trainer.loss_fn.__class__.__name__
+
+        rows = [
+            ("Modèle", model_name),
+            ("Loss", loss_name),
+        ]
+
+        for attr, label in (
+            ("lambda_ode", "lambda_ode (physics)"),
+            ("lambda_data", "lambda_data"),
+            ("lambda_ic", "lambda_ic"),
+        ):
+            if hasattr(trainer.loss_fn, attr):
+                rows.append((label, str(getattr(trainer.loss_fn, attr))))
+
+        markdown = "| Paramètre | Valeur |\n|---|---|\n"
+        markdown += "\n".join(f"| {key} | `{value}` |" for key, value in rows)
+
+        self.writer.add_text("Experiment/info", markdown, global_step=0)
+
     def _log_losses(self, trainer):
         step = trainer.epoch_step
         loss_dict = trainer.state.get("loss", None)

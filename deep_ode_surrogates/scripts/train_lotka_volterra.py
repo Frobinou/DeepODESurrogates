@@ -70,9 +70,9 @@ training_config = TrainingConfig(
 
 physics_weights = PhysicsWeights(
     name=AvailablesLoss.PINN_LOSS,
-    lambda_ode=0.0,
-    lambda_data=1.0,
-    lambda_ic=0.0,
+    lambda_ode=1.0,
+    lambda_data=0.0,
+    lambda_ic=1.0,
 )
 
 callbacks = CallbackConfig(
