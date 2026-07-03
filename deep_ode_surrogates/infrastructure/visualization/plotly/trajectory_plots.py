@@ -23,6 +23,7 @@ def plot_trajectory(
     y: np.ndarray,
     y_pred: np.ndarray | None = None,
     state_names: list[str] | None = None,
+    train_t: np.ndarray | None = None,  # <-- ce paramètre manque chez toi
     title: str = "Trajectory",
 ) -> go.Figure:
     t = np.asarray(t)
@@ -38,7 +39,16 @@ def plot_trajectory(
 
     for i, name in enumerate(state_names):
         color = px.colors.qualitative.Plotly[i]
-        fig.add_trace(go.Scatter(x=t, y=y[:, i], mode="lines", name=name, line={"color": color}))
+        fig.add_trace(
+            go.Scatter(
+                x=t,
+                y=y[:, i],
+                mode="lines+markers",
+                name=name,
+                line={"color": color},
+                marker={"size": 6, "color": color},
+            )
+        )
 
         if y_pred is not None:
             y_pred = _as_2d_y(y_pred)
@@ -46,9 +56,10 @@ def plot_trajectory(
                 go.Scatter(
                     x=t,
                     y=y_pred[:, i],
-                    mode="lines",
+                    mode="lines+markers",
                     name=f"{name} pred",
                     line={"dash": "dash", "color": color},
+                    marker={"size": 6, "symbol": "x", "color": color},
                 )
             )
 

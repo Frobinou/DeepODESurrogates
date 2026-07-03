@@ -30,6 +30,9 @@ class TensorBoardCallback(Callback):
             self._log_gradients(trainer)
 
     def on_train_end(self, trainer):
+        pass
+
+    def on_teardown(self, trainer):
         self.writer.close()
 
     def on_batch_end(self, trainer, loss):
@@ -50,42 +53,41 @@ class TensorBoardCallback(Callback):
         return super().on_epoch_start(trainer, epoch)
 
     def on_train_start(self, trainer):
+        layout = {
+            "Training": {
+                "losses": [
+                    "Multiline",
+                    [
+                        "Training/loss/total",
+                        "Training/loss/physics",
+                        "Training/loss/ic",
+                        "Training/loss/data",
+                    ],
+                ],
+            },
+        }
+        self.writer.add_custom_scalars(layout)
         return super().on_train_start(trainer)
 
     # -------------------------
     # Core logging
     # -------------------------
-
     def _log_losses(self, trainer):
         step = trainer.epoch_step
-        loss_dict = getattr(trainer.state, "loss", None)
+        loss_dict = trainer.state.get("loss", None)
 
         if loss_dict is None:
             return
-
-        losses_to_group = {}
 
         for name in ["total", "physics", "data", "ic"]:
             value = loss_dict.get(name)
 
             if value is not None:
-                scalar_value = value.item()
-
                 self.writer.add_scalar(
                     f"Training/loss/{name}",
-                    scalar_value,
+                    value.item(),
                     step,
                 )
-
-                losses_to_group[name] = scalar_value
-
-        if losses_to_group:
-            self.writer.add_scalars(
-                "Training/losses",
-                losses_to_group,
-                step,
-            )
-
         residuals = loss_dict.get("residuals", None)
 
         if residuals is not None:

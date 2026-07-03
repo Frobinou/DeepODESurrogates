@@ -18,9 +18,6 @@ from deep_ode_surrogates.infrastructure.training.callbacks.tensorboard_callback 
 def build_callbacks(experiment_path, training_config, callback_config, evaluators, logger=None):
     callbacks = []
 
-    if callback_config.use_tensorboard:
-        callbacks.append(TensorBoardCallback(experiment_path / "tensorboard_logs"))
-
     if callback_config.use_checkpoint:
         manager = CheckpointManager(
             save_dir=experiment_path / "save",
@@ -35,7 +32,10 @@ def build_callbacks(experiment_path, training_config, callback_config, evaluator
                 patience=callback_config.early_stopping_patience,
             )
         )
-
     for evaluator in evaluators:
         callbacks.append(FinalEvaluationCallback(evaluator))
+
+    if callback_config.use_tensorboard:
+        callbacks.append(TensorBoardCallback(experiment_path / "tensorboard_logs"))
+
     return callbacks

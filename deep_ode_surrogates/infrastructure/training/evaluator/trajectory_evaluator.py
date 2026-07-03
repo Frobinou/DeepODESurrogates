@@ -1,5 +1,6 @@
 # infrastructure/training/evaluator/trajectory_evaluator.py
 
+import numpy as np
 import torch
 
 from deep_ode_surrogates.infrastructure.visualization.plotly.trajectory_plots import (
@@ -11,6 +12,17 @@ from deep_ode_surrogates.infrastructure.visualization.plotly.trajectory_plots im
 class TrajectoryEvaluator:
     def __init__(self, data_loader):
         self.data_loader = data_loader
+
+    def _get_train_points_for_trajectory(self, trajectory_id) -> np.ndarray:
+        """Récupère les temps `t` des points d'entraînement appartenant à cette trajectoire."""
+        train_subset = self.data_loader.train_loader.dataset
+        full_dataset = train_subset.dataset
+        train_indices = np.asarray(train_subset.indices)
+
+        run_ids = np.asarray(full_dataset.run_ids)[train_indices]
+        mask = run_ids == trajectory_id
+
+        return full_dataset.x[train_indices][mask][:, 0]
 
     def run(self, trainer):
         batch = next(iter(self.data_loader.test_loader))
@@ -37,9 +49,15 @@ class TrajectoryEvaluator:
         y_true_np = y_true.detach().cpu().numpy()
         y_pred_np = y_pred.detach().cpu().numpy()
 
+        train_t = self._get_train_points_for_trajectory(trajectory_id.item())
+
         figures = {
             "trajectory": plot_trajectory(
-                t=t, y=y_true_np, y_pred=y_pred_np, state_names=self.data_loader.state_names
+                t=t,
+                y=y_true_np,
+                y_pred=y_pred_np,
+                state_names=self.data_loader.state_names,
+                train_t=train_t,
             ),
         }
 

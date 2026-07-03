@@ -16,3 +16,6 @@ class Callback:
 
     def on_evaluation_end(self, trainer, evaluation_results):
         pass
+
+    def on_teardown(self, trainer):
+        pass

@@ -64,7 +64,7 @@ class PINNLoss:
         y_pred = model(t)
         dy_dt = self._compute_derivative(y_pred, t)
         residuals = (dy_dt - self.ode.torch_ode(y_pred)) ** 2
-        return residuals.mean()
+        return residuals.mean(), residuals
 
     def _initial_condition_loss(self, model, batch):
         y0_pred = model(batch["x0"])
@@ -103,9 +103,10 @@ class PINNLoss:
         physics_loss = None
         data_loss = None
         initial_condition_loss = None
+        residuals_tensor = None
 
         if self.lambda_ode > 0 and self.ode is not None:
-            physics_loss = self._physics_loss(model, t)
+            physics_loss, residuals_tensor = self._physics_loss(model, t)
             total = total + self.lambda_ode * physics_loss
 
         if self.lambda_ic > 0 and self.ode is not None:
@@ -121,4 +122,5 @@ class PINNLoss:
             "physics": physics_loss,
             "data": data_loss,
             "ic": initial_condition_loss,
+            "residuals": residuals_tensor,
         }
