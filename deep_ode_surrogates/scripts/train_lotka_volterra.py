@@ -83,7 +83,7 @@ callbacks = CallbackConfig(
         log_figures_frequency=50,
     ),
     early_stopping=EarlyStoppingCallbackConfig(
-        patience=10,
+        patience=100,
         best=float("inf"),
     ),
     checkpoint=CheckpointCallbackConfig(save_dir=EXPERIMENT_DIR / "save", top_k=5),

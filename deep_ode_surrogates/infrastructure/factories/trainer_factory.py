@@ -68,12 +68,7 @@ def build_trainer(
         output_dim=ode_config.dimension,
     )
 
-    loss = loss_registry.create(
-        loss_config.name,
-        ode=ode,
-        lambda_ode=loss_config.lambda_ode,
-        lambda_data=loss_config.lambda_data,
-    )
+    loss = loss_registry.create(name=loss_config.name, ode=ode, loss_config=loss_config)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=training_config.lr)
 
