@@ -21,15 +21,15 @@ bootstrap()
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 checkpoint_path = Path(
-    r"runs\lotka_volterra\experiment_2026-07-03_15-57-24\save\epoch_1999_loss_7.523561.pt"
+    r"runs\lotka_volterra\experiment_2026-07-08_21-31-56\save\epoch_999_loss_7.537589.pt"
 )
 
 t_span = (0.0, 10.0)
 n_steps = 200
 time_normalize = TimeNormalizer(t_min=t_span[0], t_max=t_span[1])
 t = torch.linspace(
-    -1,
-    1,
+    t_span[0],
+    t_span[1],
     n_steps,
 ).reshape(-1, 1)
 
@@ -52,7 +52,7 @@ y_pred = InferSurrogateUseCase().execute(
 )
 
 fig = plot_trajectory(
-    t=t.cpu().numpy().ravel() * time_normalize.dtau_dt,
+    t=t.cpu().numpy().ravel(),  # * time_normalize.dtau_dt,
     y=y_pred.numpy(),
     state_names=["x0", "x1"],
     title="Lotka-Volterra surrogate inference",

@@ -3,7 +3,6 @@ import torch
 from deep_ode_surrogates.application.config.experiment import PhysicsWeights
 from deep_ode_surrogates.domain.losses import AvailablesLoss
 from deep_ode_surrogates.infrastructure.registries.loss_registry import register_loss
-from deep_ode_surrogates.infrastructure.training.torch.normalizer import TimeNormalizer
 from deep_ode_surrogates.infrastructure.training.torch.schemas import ScalarLossName, TensorLossName
 
 
@@ -34,22 +33,20 @@ class PINNLoss:
         y_pred: torch.Tensor,
         t: torch.Tensor,
     ) -> torch.Tensor:
-        derivatives = []
-
-        for variable_index in range(y_pred.shape[1]):
-            y_variable = y_pred[:, variable_index : variable_index + 1]
-
-            dy_variable_dt = torch.autograd.grad(
-                outputs=y_variable,
-                inputs=t,
-                grad_outputs=torch.ones_like(y_variable),
-                create_graph=True,
-                retain_graph=True,
-            )[0]
-
-            derivatives.append(dy_variable_dt)
-
-        return torch.cat(derivatives, dim=1)
+        dy_dt = torch.cat(
+            [
+                torch.autograd.grad(
+                    y_pred[:, i],
+                    t,
+                    grad_outputs=torch.ones_like(y_pred[:, i]),
+                    create_graph=True,
+                    retain_graph=True,
+                )[0]
+                for i in range(y_pred.shape[1])
+            ],
+            dim=1,
+        )
+        return dy_dt
 
     def _physics_loss(self, model: torch.nn.Module, time_grid: torch.Tensor) -> torch.Tensor:
         """
@@ -70,11 +67,11 @@ class PINNLoss:
 
         t = time_grid.to(self.device).detach().clone().requires_grad_(True)
 
-        normalizer = TimeNormalizer(time_grid.min(), time_grid.max())
-        tau = normalizer.normalize(t)
+        # normalizer = TimeNormalizer(time_grid.min(), time_grid.max())
+        # tau = normalizer.normalize(t)
 
-        y_pred = model(tau)
-        dy_dt = self._compute_derivative(y_pred, tau) * normalizer.dtau_dt  # Chaine rules
+        y_pred = model(t)
+        dy_dt = self._compute_derivative(y_pred, t)  # * normalizer.dtau_dt  # Chaine rules
 
         ode_rhs = self.ode.torch_ode(y_pred)
         if dy_dt.shape != ode_rhs.shape:
