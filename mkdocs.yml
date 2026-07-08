@@ -26,9 +26,9 @@ theme:
 
 nav:
   - Accueil: index.md
-  - Architecture: architecture\code.md
+  - Architecture: architecture/code.md
   - Models:
-    - Diffusion: models\diffusion_process.md
+    - Diffusion: models/diffusion_process.md
 
 plugins:
   - search
