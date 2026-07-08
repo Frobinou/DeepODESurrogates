@@ -56,7 +56,7 @@ ode_config = ODESConfig(
 data_config = DataConfig(
     type="parquet",
     data_path=Path("data") / "generated_dataset_LV.parquet",
-    batch_size=64,
+    batch_size=2,
     train_ratio=0.7,
     val_ratio=0.15,
     **task.model_dump(),
@@ -64,11 +64,11 @@ data_config = DataConfig(
 
 training_config = TrainingConfig(
     lr=1e-3,
-    epochs=100,
+    epochs=1000,
     checkpoint_k=5,
     model_name=AvailablesAIModel.BASIC_PINN,
     optimizer="Adam",
-    evaluators_frequency=10,
+    evaluators_frequency=100,
     **task.model_dump(),
 )
 
@@ -84,7 +84,7 @@ callbacks = CallbackConfig(
         log_dir=EXPERIMENT_DIR / "tensorboard",
         log_frequency=200,
         log_gradients=True,
-        log_figures_frequency=10,
+        log_figures_frequency=100,
     ),
     early_stopping=EarlyStoppingCallbackConfig(
         patience=100,

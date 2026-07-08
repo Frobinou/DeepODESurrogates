@@ -17,6 +17,7 @@ class CheckpointManager:
         self.best_checkpoints: list[tuple[float, Path]] = []
 
         self.save_dir.mkdir(parents=True, exist_ok=True)
+        self.current_counter: int = 0
 
     def save_top_k_checkpoint(
         self,
@@ -46,7 +47,9 @@ class CheckpointManager:
             _, worst_path = self.best_checkpoints.pop(-1)
             if worst_path.exists():
                 worst_path.unlink()
-                logger.info(f"Removed worst checkpoint: {worst_path}")
+                self.current_counter += 1
+                if self.current_counter % 100 == 0:
+                    logger.info(f"Removed worst checkpoint: {worst_path}")
 
             # logger.info(f"Saved checkpoint (top-{self.top_k}): {path}")
 

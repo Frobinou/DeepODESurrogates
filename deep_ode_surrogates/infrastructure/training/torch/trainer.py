@@ -59,6 +59,9 @@ class Trainer:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
                 self._fit_batch(batch=batch)
 
+                if self.loss_fn.lambda_data == 0:
+                    break
+
             for cb in self.callbacks:
                 cb.on_epoch_end(self, epoch)
 

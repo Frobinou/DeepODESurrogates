@@ -13,7 +13,7 @@ class MSEEvaluator(Evaluator):
 
     def run(self, trainer):
         model = trainer.model
-        model.eval()
+        model.eval()  # Pass to evaluation model
 
         total_mse = 0.0
         n = 0
@@ -31,4 +31,5 @@ class MSEEvaluator(Evaluator):
 
         total_mse /= n
 
+        model.train()  # Reset the model to train mode
         return EvaluatorResults(metrics={MetricName.MSE: total_mse})
