@@ -5,6 +5,7 @@ import torch
 from deep_ode_surrogates.application.config.experiment import PhysicsWeights
 from deep_ode_surrogates.application.config.ode import ODESConfig
 from deep_ode_surrogates.application.config.training import TrainingConfig
+from deep_ode_surrogates.infrastructure.logging.logger import logger
 from deep_ode_surrogates.infrastructure.registries.loss_registry import loss_registry
 from deep_ode_surrogates.infrastructure.registries.model_registry import model_registry
 from deep_ode_surrogates.infrastructure.registries.ode_registry import ode_registry
@@ -67,6 +68,14 @@ def build_trainer(
         input_dim=training_config.input_dim,
         output_dim=training_config.output_dim,
     )
+
+    if training_config.init_from_checkpoint is not None:
+        logger.info(f"Load weights from {training_config.init_from_checkpoint}")
+        checkpoint = torch.load(
+            training_config.init_from_checkpoint, map_location=device, weights_only=True
+        )
+        state_dict = checkpoint.get("model_state_dict", checkpoint)
+        model.load_state_dict(state_dict)
 
     loss = loss_registry.create(name=loss_config.name, ode=ode, config=loss_config, device=device)
 

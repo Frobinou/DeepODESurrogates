@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
@@ -14,6 +16,8 @@ class TrainingConfig(TaskConfig):
     model_name: AvailablesAIModel = AvailablesAIModel.BASIC_PINN
     optimizer: str = "Adam"  # for now we only support Adam, but this allows to easily add more optimizers in the future
     evaluators_frequency: int = 10
+
+    init_from_checkpoint: Path | None = None
 
 
 @dataclass
