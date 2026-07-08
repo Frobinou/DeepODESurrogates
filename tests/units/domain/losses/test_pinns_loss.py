@@ -1,5 +1,6 @@
 import torch
 
+from deep_ode_surrogates.application.config.experiment import PhysicsWeights
 from deep_ode_surrogates.domain.losses.pinn_losses import PINNLoss
 
 
@@ -41,7 +42,7 @@ class WrongConstantODE:
 
 
 def test_compute_derivative_returns_one_derivative_per_output_variable():
-    loss = PINNLoss()
+    loss = PINNLoss(device="cpu")
 
     t = torch.linspace(0, 1, 5).reshape(-1, 1)
     t.requires_grad_(True)
@@ -63,8 +64,8 @@ def test_compute_derivative_returns_one_derivative_per_output_variable():
 def test_physics_loss_is_zero_when_model_satisfies_ode():
     loss = PINNLoss(
         ode=ConstantODE(),
-        lambda_ode=1.0,
-        lambda_data=0.0,
+        config=PhysicsWeights(lambda_ode=1.0, lambda_data=0.0, lambda_ic=1.0),
+        device="cpu",
     )
 
     model = LinearModel()
@@ -83,9 +84,7 @@ def test_physics_loss_is_zero_when_model_satisfies_ode():
 
 def test_physics_loss_is_positive_when_model_does_not_satisfy_ode():
     loss = PINNLoss(
-        ode=WrongConstantODE(),
-        lambda_ode=1.0,
-        lambda_data=0.0,
+        ode=WrongConstantODE(), config=PhysicsWeights(lambda_ode=1.0, lambda_data=0.0), device="cpu"
     )
 
     model = LinearModel()
@@ -98,7 +97,7 @@ def test_physics_loss_is_positive_when_model_does_not_satisfy_ode():
 
 
 def test_data_loss_is_zero_when_prediction_matches_observation():
-    loss = PINNLoss(lambda_ode=0.0, lambda_data=1.0)
+    loss = PINNLoss(PhysicsWeights(lambda_ode=0.0, lambda_data=1.0))
 
     model = LinearModel()
 
@@ -124,7 +123,7 @@ def test_data_loss_is_zero_when_prediction_matches_observation():
 
 
 def test_data_loss_is_positive_when_prediction_differs_from_observation():
-    loss = PINNLoss(lambda_ode=0.0, lambda_data=1.0)
+    loss = PINNLoss(config=PhysicsWeights(lambda_ode=0.0, lambda_data=1.0), device="cpu")
 
     model = LinearModel()
 
@@ -139,7 +138,11 @@ def test_data_loss_is_positive_when_prediction_differs_from_observation():
 
 
 def test_total_loss_combines_physics_and_data_terms():
-    loss = PINNLoss(ode=WrongConstantODE(), lambda_ode=2.0, lambda_data=3.0, lambda_ic=0.0)
+    loss = PINNLoss(
+        ode=WrongConstantODE(),
+        config=PhysicsWeights(lambda_ode=2.0, lambda_data=3.0, lambda_ic=0.0),
+        device="cpu",
+    )
 
     model = LinearModel()
 
@@ -155,7 +158,7 @@ def test_total_loss_combines_physics_and_data_terms():
     loss_dict = loss(
         model=model,
         batch=batch,
-        t=t,
+        time_grid=t,
     )
 
     expected_total = 2.0 * loss_dict["physics"] + 3.0 * loss_dict["data"]
@@ -167,7 +170,9 @@ def test_total_loss_combines_physics_and_data_terms():
 
 
 def test_physics_loss_is_none_when_lambda_ode_is_zero():
-    loss = PINNLoss(ode=WrongConstantODE(), lambda_ode=0.0, lambda_data=1.0, lambda_ic=0.0)
+    loss = PINNLoss(
+        ode=WrongConstantODE(), config=PhysicsWeights(lambda_ode=0.0, lambda_ic=0.0), device="cpu"
+    )
 
     model = LinearModel()
 
@@ -181,7 +186,7 @@ def test_physics_loss_is_none_when_lambda_ode_is_zero():
     loss_dict = loss(
         model=model,
         batch=batch,
-        t=torch.linspace(0, 1, 5),
+        time_grid=torch.linspace(0, 1, 5),
     )
 
     assert loss_dict["physics"] is None
@@ -193,14 +198,18 @@ def test_physics_loss_is_none_when_lambda_ode_is_zero():
 
 
 def test_data_loss_is_none_when_lambda_data_is_zero():
-    loss = PINNLoss(ode=WrongConstantODE(), lambda_ode=1.0, lambda_data=0.0, lambda_ic=0.0)
+    loss = PINNLoss(
+        ode=WrongConstantODE(),
+        config=PhysicsWeights(lambda_ode=1.0, lambda_data=0.0, lambda_ic=0.0),
+        device="cpu",
+    )
 
     model = LinearModel()
 
     loss_dict = loss(
         model=model,
         batch=None,
-        t=torch.linspace(0, 1, 5),
+        time_grid=torch.linspace(0, 1, 5),
     )
 
     assert loss_dict["data"] is None
@@ -212,20 +221,24 @@ def test_data_loss_is_none_when_lambda_data_is_zero():
 
 
 def test_t_can_be_1d_or_2d():
-    loss = PINNLoss(ode=ConstantODE(), lambda_ode=1.0, lambda_data=0.0, lambda_ic=0.0)
+    loss = PINNLoss(
+        ode=ConstantODE(),
+        config=PhysicsWeights(lambda_ode=1.0, lambda_data=0.0, lambda_ic=0.0),
+        device="cpu",
+    )
 
     model = LinearModel()
 
     loss_1d = loss(
         model=model,
         batch=None,
-        t=torch.linspace(0, 1, 5),
+        time_grid=torch.linspace(0, 1, 5),
     )
 
     loss_2d = loss(
         model=model,
         batch=None,
-        t=torch.linspace(0, 1, 5).reshape(-1, 1),
+        time_grid=torch.linspace(0, 1, 5).reshape(-1, 1),
     )
 
     torch.testing.assert_close(

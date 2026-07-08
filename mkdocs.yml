@@ -26,7 +26,9 @@ theme:
 
 nav:
   - Accueil: index.md
-  - Code: code.md
+  - Architecture: architecture/code.md
+  - Models:
+    - Diffusion: models/diffusion_process.md
 
 plugins:
   - search
@@ -44,10 +46,10 @@ plugins:
       docs_structure: suffix
       languages:
         - locale: fr
-          default: true
           name: Français
           build: true
         - locale: en
+          default: true
           name: English
           build: true
 

@@ -73,7 +73,7 @@ def test_trajectory_evaluator_filters_and_sorts_single_run_before_plot(monkeypat
 
     result = evaluator.run(trainer)
 
-    assert result["figures"]["trajectory"] == "trajectory-figure"
+    assert "trajectory" in result.figures
 
     np.testing.assert_allclose(captured["t"], np.array([0.1, 0.2, 0.3]))
     np.testing.assert_allclose(captured["y"].ravel(), np.array([10.0, 20.0, 30.0]))

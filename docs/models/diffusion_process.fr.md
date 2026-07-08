@@ -364,102 +364,102 @@ def encode_pfode(model, x0, alpha_bar_fn, beta_fn, steps=50):
 
 ### Neural ODE
 
-- **[1]** Chen, R. T. Q., Rubanova, Y., Bettencourt, J., & Duvenaud, D. (2018).  
-  *Neural Ordinary Differential Equations.*  
-  NeurIPS 2018. [arXiv:1806.07366](https://arxiv.org/abs/1806.07366)  
+- **[1]** Chen, R. T. Q., Rubanova, Y., Bettencourt, J., & Duvenaud, D. (2018).
+  *Neural Ordinary Differential Equations.*
+  NeurIPS 2018. [arXiv:1806.07366](https://arxiv.org/abs/1806.07366)
   > Article fondateur — introduit la méthode de l'adjoint pour rétropropager à travers un solveur ODE.
 
-- **[2]** Rubanova, Y., Chen, R. T. Q., & Duvenaud, D. (2019).  
-  *Latent ODEs for Irregularly-Sampled Time Series.*  
-  NeurIPS 2019. [arXiv:1907.03907](https://arxiv.org/abs/1907.03907)  
+- **[2]** Rubanova, Y., Chen, R. T. Q., & Duvenaud, D. (2019).
+  *Latent ODEs for Irregularly-Sampled Time Series.*
+  NeurIPS 2019. [arXiv:1907.03907](https://arxiv.org/abs/1907.03907)
   > Extension aux séries temporelles irrégulières — très pertinent pour les données ODE partiellement observées.
 
-- **[3]** Kidger, P., Morrill, J., Foster, J., & Lyons, T. (2020).  
-  *Neural Controlled Differential Equations for Irregular Time Series.*  
-  NeurIPS 2020. [arXiv:2005.08926](https://arxiv.org/abs/2005.08926)  
+- **[3]** Kidger, P., Morrill, J., Foster, J., & Lyons, T. (2020).
+  *Neural Controlled Differential Equations for Irregular Time Series.*
+  NeurIPS 2020. [arXiv:2005.08926](https://arxiv.org/abs/2005.08926)
   > Introduit les Neural CDE, plus stables que les Neural ODE pour les entrées continues.
 
-- **[4]** Kidger, P. (2022).  
-  *On Neural Differential Equations.*  
-  PhD Thesis, University of Oxford. [arXiv:2202.02435](https://arxiv.org/abs/2202.02435)  
+- **[4]** Kidger, P. (2022).
+  *On Neural Differential Equations.*
+  PhD Thesis, University of Oxford. [arXiv:2202.02435](https://arxiv.org/abs/2202.02435)
   > Synthèse complète sur les ODE/SDE/CDE neuronaux — référence de fond recommandée.
 
 ---
 
 ### Score-based DDPM
 
-- **[5]** Ho, J., Jain, A., & Abbeel, P. (2020).  
-  *Denoising Diffusion Probabilistic Models.*  
-  NeurIPS 2020. [arXiv:2006.11239](https://arxiv.org/abs/2006.11239)  
+- **[5]** Ho, J., Jain, A., & Abbeel, P. (2020).
+  *Denoising Diffusion Probabilistic Models.*
+  NeurIPS 2020. [arXiv:2006.11239](https://arxiv.org/abs/2006.11239)
   > Article fondateur du DDPM — définit le processus forward/reverse et la loss de débruitage.
 
-- **[6]** Song, Y., & Ermon, S. (2019).  
-  *Generative Modeling by Estimating Gradients of the Data Distribution.*  
-  NeurIPS 2019. [arXiv:1907.05600](https://arxiv.org/abs/1907.05600)  
+- **[6]** Song, Y., & Ermon, S. (2019).
+  *Generative Modeling by Estimating Gradients of the Data Distribution.*
+  NeurIPS 2019. [arXiv:1907.05600](https://arxiv.org/abs/1907.05600)
   > Introduction du score matching et des modèles basés sur le score (NCSN).
 
-- **[7]** Nichol, A., & Dhariwal, P. (2021).  
-  *Improved Denoising Diffusion Probabilistic Models.*  
-  ICML 2021. [arXiv:2102.09672](https://arxiv.org/abs/2102.09672)  
+- **[7]** Nichol, A., & Dhariwal, P. (2021).
+  *Improved Denoising Diffusion Probabilistic Models.*
+  ICML 2021. [arXiv:2102.09672](https://arxiv.org/abs/2102.09672)
   > Améliore DDPM : schedule cosinus, variance apprise — recommandé pour les applications ODE.
 
-- **[8]** Batzolis, G., Stanczuk, J., Schönlieb, C.-B., & Etmann, C. (2021).  
-  *Conditional Image Generation with Score-Based Diffusion Models.*  
-  [arXiv:2111.13606](https://arxiv.org/abs/2111.13606)  
+- **[8]** Batzolis, G., Stanczuk, J., Schönlieb, C.-B., & Etmann, C. (2021).
+  *Conditional Image Generation with Score-Based Diffusion Models.*
+  [arXiv:2111.13606](https://arxiv.org/abs/2111.13606)
   > Conditionnement des modèles de diffusion — applicable au conditionnement sur les paramètres d'ODE.
 
 ---
 
 ### Probability Flow ODE & DDIM
 
-- **[9]** Song, Y., Sohl-Dickstein, J., Kingma, D. P., Kumar, A., Ermon, S., & Poole, B. (2021).  
-  *Score-Based Generative Modeling through Stochastic Differential Equations.*  
-  ICLR 2021 (Outstanding Paper). [arXiv:2011.13456](https://arxiv.org/abs/2011.13456)  
+- **[9]** Song, Y., Sohl-Dickstein, J., Kingma, D. P., Kumar, A., Ermon, S., & Poole, B. (2021).
+  *Score-Based Generative Modeling through Stochastic Differential Equations.*
+  ICLR 2021 (Outstanding Paper). [arXiv:2011.13456](https://arxiv.org/abs/2011.13456)
   > Article clé — unifie DDPM et score matching via les SDE, introduit la probability flow ODE.
 
-- **[10]** Song, J., Meng, C., & Ermon, S. (2021).  
-  *Denoising Diffusion Implicit Models.*  
-  ICLR 2021. [arXiv:2010.02502](https://arxiv.org/abs/2010.02502)  
+- **[10]** Song, J., Meng, C., & Ermon, S. (2021).
+  *Denoising Diffusion Implicit Models.*
+  ICLR 2021. [arXiv:2010.02502](https://arxiv.org/abs/2010.02502)
   > Introduit DDIM — inférence non-markovienne, déterministe, 10–50× plus rapide que DDPM.
 
-- **[11]** Lu, C., Zhou, Y., Bao, F., Chen, J., Li, C., & Zhu, J. (2022).  
-  *DPM-Solver: A Fast ODE Solver for Diffusion Probabilistic Model Sampling in Around 10 Steps.*  
-  NeurIPS 2022. [arXiv:2206.00927](https://arxiv.org/abs/2206.00927)  
+- **[11]** Lu, C., Zhou, Y., Bao, F., Chen, J., Li, C., & Zhu, J. (2022).
+  *DPM-Solver: A Fast ODE Solver for Diffusion Probabilistic Model Sampling in Around 10 Steps.*
+  NeurIPS 2022. [arXiv:2206.00927](https://arxiv.org/abs/2206.00927)
   > Solveur ODE d'ordre élevé pour la probability flow ODE — 10–20 pas suffisent.
 
-- **[12]** Lu, C., Zhou, Y., Bao, F., Chen, J., Li, C., & Zhu, J. (2022).  
-  *DPM-Solver++: Fast Solver for Guided Sampling of Diffusion Probabilistic Models.*  
-  [arXiv:2211.01095](https://arxiv.org/abs/2211.01095)  
+- **[12]** Lu, C., Zhou, Y., Bao, F., Chen, J., Li, C., & Zhu, J. (2022).
+  *DPM-Solver++: Fast Solver for Guided Sampling of Diffusion Probabilistic Models.*
+  [arXiv:2211.01095](https://arxiv.org/abs/2211.01095)
   > Extension conditionnelle de DPM-Solver, ordre 2–3, recommandé pour l'inférence rapide.
 
 ---
 
 ### Applications aux ODE scientifiques
 
-- **[13]** Rackauckas, C., Ma, Y., Martensen, J., Warner, C., Zubov, K., Supekar, R., ... & Edelman, A. (2020).  
-  *Universal Differential Equations for Scientific Machine Learning.*  
-  [arXiv:2001.04385](https://arxiv.org/abs/2001.04385)  
+- **[13]** Rackauckas, C., Ma, Y., Martensen, J., Warner, C., Zubov, K., Supekar, R., ... & Edelman, A. (2020).
+  *Universal Differential Equations for Scientific Machine Learning.*
+  [arXiv:2001.04385](https://arxiv.org/abs/2001.04385)
   > Combine solveurs numériques et réseaux de neurones pour les ODE physiques.
 
-- **[14]** Haussmann, M., Gerwinn, S., Look, A., Rakitsch, B., & Kandemir, M. (2021).  
-  *Inferring Latent Dynamics Underlying Neural Population Activity with Variational Sequential Monte Carlo.*  
-  ICML 2021. [arXiv:2105.04390](https://arxiv.org/abs/2105.04390)  
+- **[14]** Haussmann, M., Gerwinn, S., Look, A., Rakitsch, B., & Kandemir, M. (2021).
+  *Inferring Latent Dynamics Underlying Neural Population Activity with Variational Sequential Monte Carlo.*
+  ICML 2021. [arXiv:2105.04390](https://arxiv.org/abs/2105.04390)
   > Inférence bayésienne sur des dynamiques latentes — liens avec l'approche score-based.
 
-- **[15]** Gao, Y., Shi, J., Luo, D., Wen, H., & Li, Q. (2023).  
-  *EHRDiff: Exploring Realistic EHR Synthesis with Diffusion Models.*  
-  [arXiv:2303.05656](https://arxiv.org/abs/2303.05656)  
+- **[15]** Gao, Y., Shi, J., Luo, D., Wen, H., & Li, Q. (2023).
+  *EHRDiff: Exploring Realistic EHR Synthesis with Diffusion Models.*
+  [arXiv:2303.05656](https://arxiv.org/abs/2303.05656)
   > Exemple applicatif : diffusion pour générer des séries temporelles médicales (format proche des trajectoires ODE).
 
 ---
 
 ### Ressources complémentaires
 
-- **Blog** : Lilian Weng, *"What are Diffusion Models?"* (2021) — [lilianweng.github.io](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/)  
+- **Blog** : Lilian Weng, *"What are Diffusion Models?"* (2021) — [lilianweng.github.io](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/)
   > Synthèse pédagogique très complète sur DDPM, score matching et SDE.
 
-- **Blog** : Yang Song, *"Generative Modeling by Estimating Gradients of the Data Distribution"* — [yang-song.net](https://yang-song.net/blog/2021/score/)  
+- **Blog** : Yang Song, *"Generative Modeling by Estimating Gradients of the Data Distribution"* — [yang-song.net](https://yang-song.net/blog/2021/score/)
   > Explication intuitive du score matching par l'auteur des articles de référence.
 
-- **Code** : `score_sde` (Yang Song) — [github.com/yang-song/score_sde_pytorch](https://github.com/yang-song/score_sde_pytorch)  
+- **Code** : `score_sde` (Yang Song) — [github.com/yang-song/score_sde_pytorch](https://github.com/yang-song/score_sde_pytorch)
   > Implémentation de référence VP-SDE / VE-SDE / Probability Flow ODE.
