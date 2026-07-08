@@ -70,7 +70,7 @@ training_config = TrainingConfig(
     optimizer="Adam",
     evaluators_frequency=100,
     init_from_checkpoint=Path(
-        "runs\lotka_volterra\experiment_2026-07-08_20-09-30\save\epoch_0_loss_51.441235.pt"
+        r"runs\lotka_volterra\experiment_2026-07-08_20-09-30\save\epoch_0_loss_51.441235.pt"
     ),
     **task.model_dump(),
 )
