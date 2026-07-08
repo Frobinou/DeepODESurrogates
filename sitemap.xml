@@ -1,59 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <url>
-        <loc>https://frobinou.github.io/PINNSFramework/</loc>
-        <lastmod>2026-07-01</lastmod>
+        <loc>https://frobinou.github.io/DeepODESurrogates/</loc>
+        <lastmod>2026-07-08</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/PINNSFramework/"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/PINNSFramework/fr/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/DeepODESurrogates/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/DeepODESurrogates/fr/"/>
     </url>
     <url>
-        <loc>https://frobinou.github.io/PINNSFramework/code/</loc>
-        <lastmod>2026-07-01</lastmod>
+        <loc>https://frobinou.github.io/DeepODESurrogates/architecture/code/</loc>
+        <lastmod>2026-07-08</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/PINNSFramework/code/"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/PINNSFramework/fr/code/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/DeepODESurrogates/architecture/code/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/DeepODESurrogates/fr/architecture/code/"/>
     </url>
     <url>
-        <loc>https://frobinou.github.io/PINNSFramework/models/diffusion_process/</loc>
-        <lastmod>2026-07-01</lastmod>
+        <loc>https://frobinou.github.io/DeepODESurrogates/models/diffusion_process/</loc>
+        <lastmod>2026-07-08</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/PINNSFramework/models/diffusion_process/"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/PINNSFramework/fr/models/diffusion_process/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/DeepODESurrogates/models/diffusion_process/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/DeepODESurrogates/fr/models/diffusion_process/"/>
     </url>
     <url>
-        <loc>https://frobinou.github.io/PINNSFramework/models/diffusion_process_fr/</loc>
-        <lastmod>2026-07-01</lastmod>
+        <loc>https://frobinou.github.io/DeepODESurrogates/fr/</loc>
+        <lastmod>2026-07-08</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/PINNSFramework/models/diffusion_process_fr/"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/PINNSFramework/fr/models/diffusion_process_fr/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/DeepODESurrogates/fr/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/DeepODESurrogates/"/>
     </url>
     <url>
-        <loc>https://frobinou.github.io/PINNSFramework/fr/</loc>
-        <lastmod>2026-07-01</lastmod>
+        <loc>https://frobinou.github.io/DeepODESurrogates/fr/architecture/code/</loc>
+        <lastmod>2026-07-08</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/PINNSFramework/fr/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/PINNSFramework/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/DeepODESurrogates/fr/architecture/code/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/DeepODESurrogates/architecture/code/"/>
     </url>
     <url>
-        <loc>https://frobinou.github.io/PINNSFramework/fr/code/</loc>
-        <lastmod>2026-07-01</lastmod>
+        <loc>https://frobinou.github.io/DeepODESurrogates/fr/models/diffusion_process/</loc>
+        <lastmod>2026-07-08</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/PINNSFramework/fr/code/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/PINNSFramework/code/"/>
-    </url>
-    <url>
-        <loc>https://frobinou.github.io/PINNSFramework/fr/models/diffusion_process/</loc>
-        <lastmod>2026-07-01</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/PINNSFramework/fr/models/diffusion_process/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/PINNSFramework/models/diffusion_process/"/>
-    </url>
-    <url>
-        <loc>https://frobinou.github.io/PINNSFramework/fr/models/diffusion_process_fr/</loc>
-        <lastmod>2026-07-01</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/PINNSFramework/fr/models/diffusion_process_fr/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/PINNSFramework/models/diffusion_process_fr/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://frobinou.github.io/DeepODESurrogates/fr/models/diffusion_process/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://frobinou.github.io/DeepODESurrogates/models/diffusion_process/"/>
     </url>
 </urlset>
