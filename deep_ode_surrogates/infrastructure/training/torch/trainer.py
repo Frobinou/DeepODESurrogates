@@ -1,4 +1,5 @@
 import torch
+
 from deep_ode_surrogates.domain.data_loader.base import BaseDataLoader
 from deep_ode_surrogates.infrastructure.training.torch.schemas import EpochStats
 
