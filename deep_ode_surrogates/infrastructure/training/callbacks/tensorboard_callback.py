@@ -19,7 +19,7 @@ class TensorBoardCallback(Callback):
     # -------------------------
 
     def on_epoch_end(self, trainer, epoch):
-        if trainer.epoch_step % self.log_frequency != 0:
+        if trainer.current_epoch % self.log_frequency != 0:
             return
 
         self._log_losses(trainer)
@@ -37,15 +37,11 @@ class TensorBoardCallback(Callback):
         return super().on_batch_end(trainer, loss)
 
     def on_evaluation_end(self, trainer, evaluation_results):
-        step = trainer.epoch_step
-
-        metrics = evaluation_results.get("metrics", {})
-        figures = evaluation_results.get("figures", {})
-
-        self.log_dict(metrics, step, prefix="Evaluation")
+        step = trainer.current_epoch
+        self.log_dict(evaluation_results.metrics, step, prefix="Evaluation")
 
         if step % self.log_figures_frequency == 0:
-            self.log_plotly_figures(figures, step, prefix="Evaluation")
+            self.log_plotly_figures(evaluation_results.figures, step, prefix="Evaluation")
 
     def on_epoch_start(self, trainer, epoch):
         return super().on_epoch_start(trainer, epoch)
@@ -96,22 +92,18 @@ class TensorBoardCallback(Callback):
         self.writer.add_text("Experiment/info", markdown, global_step=0)
 
     def _log_losses(self, trainer):
-        step = trainer.epoch_step
-        loss_dict = trainer.state.get("loss", None)
+        step = trainer.current_epoch
 
-        if loss_dict is None:
-            return
-
-        for name in ["total", "physics", "data", "ic"]:
-            value = loss_dict.get(name)
-
+        loss_dict = trainer.current_state.get_losses()
+        for name, value in loss_dict.items():
             if value is not None:
                 self.writer.add_scalar(
                     f"Training/loss/{name}",
                     value.item(),
                     step,
                 )
-        residuals = loss_dict.get("residuals", None)
+
+        residuals = trainer.current_state.get_residuals()
 
         if residuals is not None:
             var_names = getattr(trainer, "var_names", None)
@@ -148,7 +140,7 @@ class TensorBoardCallback(Callback):
         self.writer.add_scalar(
             "Training/gradients/global_norm",
             total_norm,
-            trainer.epoch_step,
+            trainer.current_epoch,
         )
 
     # -------------------------

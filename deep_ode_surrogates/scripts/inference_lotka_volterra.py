@@ -11,6 +11,7 @@ from deep_ode_surrogates.infrastructure.persistence.checkpoints.model_loader imp
 )
 from deep_ode_surrogates.infrastructure.registries.bootstrap import bootstrap
 from deep_ode_surrogates.infrastructure.registries.model_registry import model_registry
+from deep_ode_surrogates.infrastructure.training.torch.normalizer import TimeNormalizer
 from deep_ode_surrogates.infrastructure.visualization.plotly.trajectory_plots import (
     plot_trajectory,
 )
@@ -20,15 +21,15 @@ bootstrap()
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 checkpoint_path = Path(
-    "runs\lotka_volterra\experiment_2026-07-01_20-12-10\save\epoch_19_loss_0.122524.pt"
+    "runs\lotka_volterra\experiment_2026-07-03_15-57-24\save\epoch_1999_loss_7.523561.pt"
 )
 
 t_span = (0.0, 10.0)
 n_steps = 200
-
+time_normalize = TimeNormalizer(t_min=t_span[0], t_max=t_span[1])
 t = torch.linspace(
-    t_span[0],
-    t_span[1],
+    -1,
+    1,
     n_steps,
 ).reshape(-1, 1)
 
@@ -51,7 +52,7 @@ y_pred = InferSurrogateUseCase().execute(
 )
 
 fig = plot_trajectory(
-    t=t.cpu().numpy().ravel(),
+    t=t.cpu().numpy().ravel() * time_normalize.dtau_dt,
     y=y_pred.numpy(),
     state_names=["x0", "x1"],
     title="Lotka-Volterra surrogate inference",

@@ -1,6 +1,10 @@
 import torch
 
 from deep_ode_surrogates.infrastructure.training.evaluator.base import Evaluator
+from deep_ode_surrogates.infrastructure.training.evaluator.schemas import (
+    EvaluatorResults,
+    MetricName,
+)
 
 
 class MSEEvaluator(Evaluator):
@@ -9,7 +13,7 @@ class MSEEvaluator(Evaluator):
 
     def run(self, trainer):
         model = trainer.model
-        model.eval()
+        model.eval()  # Pass to evaluation model
 
         total_mse = 0.0
         n = 0
@@ -19,23 +23,13 @@ class MSEEvaluator(Evaluator):
                 batch = {k: v.to(trainer.device) for k, v in batch.items()}
                 x = batch["x"]
                 y_true = batch["y"]
-
                 y_pred = model(x)
 
                 mse = ((y_pred - y_true) ** 2).mean()
-
                 total_mse += mse.item()
                 n += 1
 
         total_mse /= n
 
-        trainer.state["metrics"]["mse"] = total_mse
-
-        model.train()
-
-        return {
-            "metrics": {
-                "mse": mse,
-            },
-            "figures": {},
-        }
+        model.train()  # Reset the model to train mode
+        return EvaluatorResults(metrics={MetricName.MSE: total_mse})

@@ -83,8 +83,8 @@ class ParquetDataset(Dataset):
 class ParquetDataLoader(BaseDataLoader):
     def __init__(self, data_config: DataConfig):
         self.parquet_path = Path(data_config.data_path)
-        self.input_cols = data_config.input_cols
-        self.target_cols = data_config.target_cols
+        self.input_cols = data_config.x_names
+        self.target_cols = data_config.y_names
         self.run_id_col = data_config.run_id_col
         super().__init__(data_config=data_config)  # déclenche build_dataset() + split
 

@@ -14,10 +14,10 @@ class CheckpointCallback(Callback):
     def on_epoch_end(self, trainer, epoch: int) -> None:
         self.manager.save_top_k_checkpoint(
             epoch=epoch,
-            loss=trainer.last_loss,
+            metric=trainer.current_state.epoch_loss,
             model=trainer.model,
             optimizer=trainer.optimizer,
-            global_step=trainer.epoch_step,
+            global_step=trainer.current_epoch,
         )
 
     def on_train_end(self, trainer):

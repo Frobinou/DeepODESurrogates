@@ -1,15 +1,15 @@
 from pathlib import Path
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import Field, model_validator
+
+from deep_ode_surrogates.application.config.task import TaskConfig
 
 
-class DataConfig(BaseModel):
+class DataConfig(TaskConfig):
     """Everything needed to build a DataLoader, nothing more."""
 
     type: str = "parquet"  # for now we only support parquet, but this allows to easily add more data sources in the future
     data_path: Path
-    input_cols: list[str]
-    target_cols: list[str]
     run_id_col: str = Field(
         "run_id", description="Column name for the trajectory/run ID in the dataset."
     )

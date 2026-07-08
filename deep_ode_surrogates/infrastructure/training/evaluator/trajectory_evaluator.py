@@ -3,13 +3,18 @@
 import numpy as np
 import torch
 
+from deep_ode_surrogates.infrastructure.training.evaluator.base import Evaluator
+from deep_ode_surrogates.infrastructure.training.evaluator.schemas import (
+    EvaluatorResults,
+    FigureName,
+)
 from deep_ode_surrogates.infrastructure.visualization.plotly.trajectory_plots import (
     plot_phase_space,
     plot_trajectory,
 )
 
 
-class TrajectoryEvaluator:
+class TrajectoryEvaluator(Evaluator):
     def __init__(self, data_loader):
         self.data_loader = data_loader
 
@@ -24,7 +29,7 @@ class TrajectoryEvaluator:
 
         return full_dataset.x[train_indices][mask][:, 0]
 
-    def run(self, trainer):
+    def run(self, trainer) -> EvaluatorResults:
         batch = next(iter(self.data_loader.test_loader))
         x = batch["x"].to(trainer.device)
         y_true = batch["y"].to(trainer.device)
@@ -52,7 +57,7 @@ class TrajectoryEvaluator:
         train_t = self._get_train_points_for_trajectory(trajectory_id.item())
 
         figures = {
-            "trajectory": plot_trajectory(
+            FigureName.TRAJECTORY: plot_trajectory(
                 t=t,
                 y=y_true_np,
                 y_pred=y_pred_np,
@@ -62,9 +67,9 @@ class TrajectoryEvaluator:
         }
 
         if y_true_np.shape[1] >= 2:
-            figures["phase_space"] = plot_phase_space(
+            figures[FigureName.PHASE_SPACE] = plot_phase_space(
                 y=y_true_np,
                 y_pred=y_pred_np,
             )
 
-        return {"metrics": {}, "figures": figures}
+        return EvaluatorResults(figures=figures)
