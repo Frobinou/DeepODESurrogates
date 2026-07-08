@@ -3,6 +3,7 @@ import torch
 from deep_ode_surrogates.application.config.experiment import PhysicsWeights
 from deep_ode_surrogates.domain.losses import AvailablesLoss
 from deep_ode_surrogates.infrastructure.registries.loss_registry import register_loss
+from deep_ode_surrogates.infrastructure.training.torch.normalizer import TimeNormalizer
 from deep_ode_surrogates.infrastructure.training.torch.schemas import ScalarLossName, TensorLossName
 
 
@@ -50,7 +51,7 @@ class PINNLoss:
 
         return torch.cat(derivatives, dim=1)
 
-    def _physics_loss(self, model: torch.nn.Module, t: torch.Tensor) -> torch.Tensor:
+    def _physics_loss(self, model: torch.nn.Module, time_grid: torch.Tensor) -> torch.Tensor:
         """
         ODE residual loss: mean((dy/dt - F(y, t))²)
 
@@ -64,11 +65,26 @@ class PINNLoss:
         Returns:
             Scalar loss tensor.
         """
-        t = t.detach().clone().requires_grad_(True)
-        y_pred = model(t)
-        dy_dt = self._compute_derivative(y_pred, t)
-        residuals = (dy_dt - self.ode.torch_ode(y_pred)) ** 2
-        return residuals.mean(), residuals
+        if time_grid is not None and time_grid.ndim == 1:
+            time_grid = time_grid.unsqueeze(1)
+
+        t = time_grid.to(self.device).detach().clone().requires_grad_(True)
+
+        normalizer = TimeNormalizer(time_grid.min(), time_grid.max())
+        tau = normalizer.normalize(t)
+
+        y_pred = model(tau)
+        dy_dt = self._compute_derivative(y_pred, tau) * normalizer.dtau_dt  # Chaine rules
+
+        ode_rhs = self.ode.torch_ode(y_pred)
+        if dy_dt.shape != ode_rhs.shape:
+            raise RuntimeError(
+                f"Shape mismatch in physics loss: dy_dt={dy_dt.shape}, ode_rhs={ode_rhs.shape}"
+            )
+
+        residuals = dy_dt - ode_rhs
+
+        return (residuals**2).mean(), residuals
 
     def _initial_condition_loss(self, model, batch):
         y0_pred = model(batch["x0"])
@@ -97,8 +113,6 @@ class PINNLoss:
         batch: dict,
         time_grid: torch.Tensor,
     ) -> dict[str, torch.Tensor | None]:
-        if time_grid is not None and time_grid.ndim == 1:
-            time_grid = time_grid.unsqueeze(1)
         total = torch.zeros((), device=self.device)
 
         physics_loss = None
